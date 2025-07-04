@@ -1,5 +1,6 @@
 <template>
   <div id="app" class="min-h-screen bg-gray-50">
+    <!-- Navigation -->
     <nav class="bg-white border-b border-gray-100 sticky top-0 z-40">
       <div class="max-w-6xl mx-auto px-6">
         <div class="flex justify-between items-center h-16">
@@ -11,6 +12,7 @@
               Better Form
             </button>
           </div>
+          
           <div v-if="!user && !isPublicForm" class="flex items-center space-x-3">
             <button
               @click="showAuthModal = true; authMode = 'login'"
@@ -25,6 +27,7 @@
               Get Started
             </button>
           </div>
+          
           <div v-else-if="user" class="flex items-center space-x-4">
             <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
               <span class="text-gray-600 font-medium text-sm">{{ user.email?.[0]?.toUpperCase() }}</span>
@@ -40,6 +43,8 @@
         </div>
       </div>
     </nav>
+
+    <!-- Auth Modal -->
     <div v-if="showAuthModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-2xl p-8 max-w-md w-full">
         <div class="text-center mb-8">
@@ -50,9 +55,12 @@
             {{ authMode === 'login' ? 'Sign in to your account' : 'Start creating better forms today' }}
           </p>
         </div>
+
+        <!-- Error Message -->
         <div v-if="authError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p class="text-red-600 text-sm">{{ authError }}</p>
         </div>
+
         <form @submit.prevent="handleAuth" class="space-y-4">
           <div>
             <input
@@ -73,6 +81,7 @@
               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all"
             >
           </div>
+          
           <button
             type="submit"
             :disabled="authLoading"
@@ -81,6 +90,7 @@
             {{ authLoading ? 'Please wait...' : (authMode === 'login' ? 'Sign In' : 'Create Account') }}
           </button>
         </form>
+
         <div class="mt-6 text-center">
           <button
             @click="authMode = authMode === 'login' ? 'signup' : 'login'; authError = ''"
@@ -89,6 +99,7 @@
             {{ authMode === 'login' ? "Don't have an account? Sign up" : "Already have an account? Sign in" }}
           </button>
         </div>
+
         <button
           @click="showAuthModal = false; authError = ''"
           class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
@@ -97,20 +108,28 @@
         </button>
       </div>
     </div>
+
+    <!-- Main Content -->
     <main class="max-w-6xl mx-auto px-6 py-8">
+      <!-- Public Form View -->
       <div v-if="isPublicForm && publicForm">
         <div class="max-w-2xl mx-auto">
           <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <!-- Progress -->
             <div class="h-1 bg-gray-100">
               <div
                 class="h-full bg-black transition-all duration-500"
                 :style="{ width: `${((currentQuestionIndex + 1) / Math.max(publicForm.questions.length, 1)) * 100}%` }"
               ></div>
             </div>
+
+            <!-- Header -->
             <div class="p-8 text-center border-b border-gray-100">
               <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ publicForm.title }}</h1>
               <p v-if="publicForm.description" class="text-gray-600">{{ publicForm.description }}</p>
             </div>
+
+            <!-- Question -->
             <div class="p-8 min-h-[400px] flex flex-col justify-center">
               <div v-if="currentQuestionIndex < publicForm.questions.length" class="space-y-8">
                 <div class="text-center">
@@ -118,10 +137,13 @@
                     {{ currentQuestionIndex + 1 }} of {{ publicForm.questions.length }}
                   </span>
                 </div>
+
                 <h2 class="text-2xl font-semibold text-gray-900 text-center leading-relaxed">
                   {{ publicForm.questions[currentQuestionIndex].question }}
                   <span v-if="publicForm.questions[currentQuestionIndex].required" class="text-red-500">*</span>
                 </h2>
+
+                <!-- Text/Email Input -->
                 <div v-if="['text', 'email'].includes(publicForm.questions[currentQuestionIndex].type)">
                   <input
                     v-model="publicFormResponses[currentQuestionIndex]"
@@ -131,6 +153,8 @@
                     @keyup.enter="nextPublicQuestion"
                   >
                 </div>
+
+                <!-- Multiple Choice -->
                 <div v-else-if="publicForm.questions[currentQuestionIndex].type === 'multiple'" class="space-y-3">
                   <button
                     v-for="(option, optionIndex) in publicForm.questions[currentQuestionIndex].options"
@@ -146,6 +170,8 @@
                     {{ option }}
                   </button>
                 </div>
+
+                <!-- Rating -->
                 <div v-else-if="publicForm.questions[currentQuestionIndex].type === 'rating'">
                   <div class="flex justify-center space-x-2">
                     <button
@@ -164,6 +190,8 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Thank You -->
               <div v-else class="text-center space-y-6">
                 <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto">
                   <Check class="w-8 h-8 text-green-600" />
@@ -178,6 +206,8 @@
                 </button>
               </div>
             </div>
+
+            <!-- Navigation -->
             <div v-if="currentQuestionIndex < publicForm.questions.length" class="p-6 bg-gray-50 flex justify-between items-center">
               <button
                 v-if="currentQuestionIndex > 0"
@@ -188,6 +218,7 @@
                 <span>Previous</span>
               </button>
               <div v-else></div>
+
               <button
                 @click="nextPublicQuestion"
                 :disabled="isPublicQuestionRequired && !publicFormResponses[currentQuestionIndex]"
@@ -205,6 +236,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Form Not Found -->
       <div v-else-if="isPublicForm && !publicForm && !loading">
         <div class="text-center py-20">
           <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -220,12 +253,16 @@
           </button>
         </div>
       </div>
+
+      <!-- Loading Public Form -->
       <div v-else-if="isPublicForm && loading">
         <div class="text-center py-20">
           <div class="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full mx-auto mb-4"></div>
           <p class="text-gray-600">Loading form...</p>
         </div>
       </div>
+
+      <!-- Landing Page -->
       <div v-else-if="!user" class="text-center py-20">
         <h1 class="text-5xl font-bold text-gray-900 mb-6 leading-tight">
           Forms that people<br>
@@ -235,12 +272,15 @@
           Create beautiful, interactive forms that feel more like conversations. 
           Higher completion rates, better data quality.
         </p>
+        
         <button
           @click="showAuthModal = true; authMode = 'signup'"
           class="bg-black text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-800 transition-all transform hover:scale-105 shadow-lg"
         >
           Start Building
         </button>
+        
+        <!-- Features -->
         <div class="grid md:grid-cols-3 gap-8 mt-24">
           <div class="text-center">
             <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
@@ -265,6 +305,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Dashboard -->
       <div v-else-if="currentView === 'dashboard'">
         <div class="flex justify-between items-center mb-8">
           <div>
@@ -279,10 +321,14 @@
             <span>New Form</span>
           </button>
         </div>
+
+        <!-- Loading State -->
         <div v-if="loading" class="text-center py-20">
           <div class="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full mx-auto mb-4"></div>
           <p class="text-gray-600">Loading your forms...</p>
         </div>
+
+        <!-- Empty State -->
         <div v-else-if="forms.length === 0" class="text-center py-20">
           <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <FileText class="w-8 h-8 text-gray-400" />
@@ -296,6 +342,8 @@
             Create Form
           </button>
         </div>
+
+        <!-- Forms Grid -->
         <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
             v-for="form in forms"
@@ -327,16 +375,20 @@
                 </button>
               </div>
             </div>
+            
             <p class="text-gray-600 text-sm mb-4 line-clamp-2">
               {{ form.description || 'No description' }}
             </p>
+
             <div class="text-xs text-gray-500 mb-4 font-mono bg-gray-50 px-2 py-1 rounded">
               ID: {{ form.id }}
             </div>
+            
             <div class="flex justify-between items-center text-sm mb-4">
               <span class="text-gray-500">{{ form.questions?.length || 0 }} questions</span>
               <span class="text-green-600 font-medium">{{ form.responseCount || 0 }} responses</span>
             </div>
+            
             <div class="flex justify-between items-center text-sm">
               <div class="flex space-x-3">
                 <button
@@ -356,6 +408,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Form Builder -->
       <div v-else-if="currentView === 'builder'">
         <div class="flex justify-between items-center mb-8">
           <div class="flex items-center space-x-4">
@@ -387,10 +441,13 @@
             </button>
           </div>
         </div>
+
         <div class="grid lg:grid-cols-4 gap-8">
+          <!-- Sidebar -->
           <div class="lg:col-span-1">
             <div class="bg-white rounded-2xl p-6 border border-gray-100 sticky top-24">
               <h3 class="font-semibold mb-6 text-gray-900">Form Settings</h3>
+              
               <div class="space-y-6">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
@@ -401,6 +458,7 @@
                     class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                   >
                 </div>
+                
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                   <textarea
@@ -410,6 +468,7 @@
                     class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all resize-none"
                   ></textarea>
                 </div>
+
                 <div class="bg-blue-50 p-3 rounded-lg">
                   <div class="flex items-center space-x-2 mb-2">
                     <Database class="w-4 h-4 text-blue-600" />
@@ -417,6 +476,7 @@
                   </div>
                   <p class="text-xs text-blue-700">All responses are automatically stored in Firebase Firestore with real-time analytics.</p>
                 </div>
+
                 <div>
                   <h4 class="text-sm font-medium text-gray-700 mb-3">Add Question</h4>
                   <div class="space-y-2">
@@ -453,6 +513,8 @@
               </div>
             </div>
           </div>
+
+          <!-- Questions -->
           <div class="lg:col-span-3">
             <div v-if="currentForm.questions.length === 0" class="text-center py-20 bg-white rounded-2xl border border-gray-100">
               <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -461,6 +523,7 @@
               <h3 class="text-lg font-semibold text-gray-900 mb-2">Add your first question</h3>
               <p class="text-gray-600">Choose a question type from the sidebar to get started.</p>
             </div>
+
             <div v-else class="space-y-4">
               <div
                 v-for="(question, index) in currentForm.questions"
@@ -481,6 +544,7 @@
                     <Trash2 class="w-4 h-4" />
                   </button>
                 </div>
+
                 <div class="space-y-4">
                   <div>
                     <input
@@ -490,6 +554,8 @@
                       class="w-full px-0 py-2 text-lg font-medium border-0 border-b-2 border-gray-200 focus:border-black focus:ring-0 transition-colors bg-transparent"
                     >
                   </div>
+
+                  <!-- Multiple Choice Options -->
                   <div v-if="question.type === 'multiple'" class="space-y-3">
                     <div
                       v-for="(option, optionIndex) in question.options"
@@ -518,6 +584,7 @@
                       <span>Add option</span>
                     </button>
                   </div>
+
                   <div class="flex items-center space-x-4 pt-4 border-t border-gray-100">
                     <label class="flex items-center space-x-2">
                       <input
@@ -534,6 +601,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Responses View -->
       <div v-else-if="currentView === 'responses'">
         <div class="flex justify-between items-center mb-8">
           <div class="flex items-center space-x-4">
@@ -558,6 +627,8 @@
             </button>
           </div>
         </div>
+
+        <!-- Response Stats -->
         <div class="grid md:grid-cols-4 gap-6 mb-8">
           <div class="bg-white rounded-2xl p-6 border border-gray-100">
             <div class="flex items-center justify-between">
@@ -604,14 +675,18 @@
             </div>
           </div>
         </div>
+
+        <!-- Responses Table -->
         <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
           <div class="p-6 border-b border-gray-100">
             <h3 class="text-lg font-semibold text-gray-900">Recent Responses</h3>
           </div>
+          
           <div v-if="loading" class="p-8 text-center">
             <div class="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full mx-auto mb-4"></div>
             <p class="text-gray-600">Loading responses...</p>
           </div>
+
           <div v-else-if="responses.length === 0" class="p-8 text-center">
             <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <BarChart3 class="w-6 h-6 text-gray-400" />
@@ -619,6 +694,7 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-2">No responses yet</h3>
             <p class="text-gray-600">Share your form to start collecting responses.</p>
           </div>
+
           <div v-else class="overflow-x-auto">
             <table class="w-full">
               <thead class="bg-gray-50">
@@ -647,6 +723,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Form Preview -->
       <div v-else-if="currentView === 'preview'">
         <div class="flex justify-between items-center mb-8">
           <button
@@ -664,18 +742,25 @@
             <span>Share</span>
           </button>
         </div>
+
+        <!-- Form Preview (same structure as public form) -->
         <div class="max-w-2xl mx-auto">
           <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <!-- Progress -->
             <div class="h-1 bg-gray-100">
               <div
                 class="h-full bg-black transition-all duration-500"
                 :style="{ width: `${((currentQuestionIndex + 1) / Math.max(currentForm.questions.length, 1)) * 100}%` }"
               ></div>
             </div>
+
+            <!-- Header -->
             <div class="p-8 text-center border-b border-gray-100">
               <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ currentForm.title || 'Untitled Form' }}</h1>
               <p v-if="currentForm.description" class="text-gray-600">{{ currentForm.description }}</p>
             </div>
+
+            <!-- Question -->
             <div class="p-8 min-h-[400px] flex flex-col justify-center">
               <div v-if="currentQuestionIndex < currentForm.questions.length" class="space-y-8">
                 <div class="text-center">
@@ -683,10 +768,13 @@
                     {{ currentQuestionIndex + 1 }} of {{ currentForm.questions.length }}
                   </span>
                 </div>
+
                 <h2 class="text-2xl font-semibold text-gray-900 text-center leading-relaxed">
                   {{ currentForm.questions[currentQuestionIndex].question }}
                   <span v-if="currentForm.questions[currentQuestionIndex].required" class="text-red-500">*</span>
                 </h2>
+
+                <!-- Text/Email Input -->
                 <div v-if="['text', 'email'].includes(currentForm.questions[currentQuestionIndex].type)">
                   <input
                     v-model="formResponses[currentQuestionIndex]"
@@ -695,6 +783,8 @@
                     class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-black focus:ring-0 transition-all text-center text-lg"
                   >
                 </div>
+
+                <!-- Multiple Choice -->
                 <div v-else-if="currentForm.questions[currentQuestionIndex].type === 'multiple'" class="space-y-3">
                   <button
                     v-for="(option, optionIndex) in currentForm.questions[currentQuestionIndex].options"
@@ -710,6 +800,8 @@
                     {{ option }}
                   </button>
                 </div>
+
+                <!-- Rating -->
                 <div v-else-if="currentForm.questions[currentQuestionIndex].type === 'rating'">
                   <div class="flex justify-center space-x-2">
                     <button
@@ -728,6 +820,8 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Thank You -->
               <div v-else class="text-center space-y-6">
                 <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto">
                   <Check class="w-8 h-8 text-green-600" />
@@ -736,6 +830,8 @@
                 <p class="text-gray-600">Your response has been recorded.</p>
               </div>
             </div>
+
+            <!-- Navigation -->
             <div v-if="currentQuestionIndex < currentForm.questions.length" class="p-6 bg-gray-50 flex justify-between items-center">
               <button
                 v-if="currentQuestionIndex > 0"
@@ -746,6 +842,7 @@
                 <span>Previous</span>
               </button>
               <div v-else></div>
+
               <button
                 @click="nextQuestion"
                 :disabled="isCurrentQuestionRequired && !formResponses[currentQuestionIndex]"
@@ -764,6 +861,8 @@
         </div>
       </div>
     </main>
+
+    <!-- Share Modal -->
     <div v-if="showShareModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-2xl p-8 max-w-md w-full">
         <div class="flex justify-between items-center mb-6">
@@ -772,6 +871,7 @@
             <X class="w-5 h-5" />
           </button>
         </div>
+        
         <div class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Public Form Link</label>
@@ -796,6 +896,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Submission Success Modal -->
     <div v-if="showSubmissionSuccess" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-2xl p-8 max-w-md w-full text-center">
         <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -820,9 +922,11 @@ import {
   Edit2, FileText, HelpCircle, Mail, Plus, Share2, Star, Trash2, 
   Type, X, Zap, Database, Download, TrendingUp, Target, Clock
 } from 'lucide-vue-next'
+
 import { initializeApp } from 'firebase/app'
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged } from 'firebase/auth'
 import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, getDoc, query, where, orderBy, increment } from 'firebase/firestore'
+
 const firebaseConfig = {
   apiKey: "AIzaSyDaiT2hVJvKMpWbWo9WhM-0iuuzVN6a_ms",
   authDomain: "better-form-95050.firebaseapp.com",
@@ -831,12 +935,15 @@ const firebaseConfig = {
   messagingSenderId: "821126413132",
   appId: "1:821126413132:web:b15d07cdbcd7b0323bade9"
 }
+
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const db = getFirestore(app)
+
 const generateUniqueId = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 9)
 }
+
 const user = ref(null)
 const loading = ref(false)
 const saving = ref(false)
@@ -849,6 +956,7 @@ const authForm = reactive({
   email: '',
   password: ''
 })
+
 const currentView = ref('dashboard')
 const previousView = ref('dashboard')
 const forms = ref([])
@@ -863,61 +971,74 @@ const currentForm = reactive({
   userId: null,
   responseCount: 0
 })
+
 const currentQuestionIndex = ref(0)
 const formResponses = ref({})
 const showShareModal = ref(false)
 const shareUrl = ref('')
 const selectedFormForShare = ref(null)
+
 const isPublicForm = ref(false)
 const publicForm = ref(null)
 const publicFormResponses = ref({})
+
 const weeklyResponses = computed(() => {
   const oneWeekAgo = new Date()
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
   return responses.value.filter(r => r.submittedAt && r.submittedAt.toDate() > oneWeekAgo).length
 })
+
 const completionRate = computed(() => {
   if (responses.value.length === 0) return 0
   const completed = responses.value.filter(r => r.responses && r.responses.length > 0).length
   return Math.round((completed / responses.value.length) * 100)
 })
+
 const averageTime = computed(() => {
   if (responses.value.length === 0) return 0
   const times = responses.value.filter(r => r.completionTime).map(r => r.completionTime)
   if (times.length === 0) return 0
   return Math.round(times.reduce((a, b) => a + b, 0) / times.length)
 })
+
 const isCurrentQuestionRequired = computed(() => {
   if (!currentForm.questions || !currentForm.questions[currentQuestionIndex.value]) {
     return false
   }
   return currentForm.questions[currentQuestionIndex.value].required
 })
+
 const isPublicQuestionRequired = computed(() => {
   if (!publicForm.value?.questions || !publicForm.value.questions[currentQuestionIndex.value]) {
     return false
   }
   return publicForm.value.questions[currentQuestionIndex.value].required
 })
+
 const checkForPublicForm = async () => {
   const urlParams = new URLSearchParams(window.location.search)
   const formId = urlParams.get('form')
+  
   if (formId) {
     isPublicForm.value = true
     await loadPublicForm(formId)
   }
 }
+
 const handleAuth = async () => {
   if (!authForm.email || !authForm.password) {
     authError.value = 'Please fill in all fields'
     return
   }
+
   if (authForm.password.length < 6) {
     authError.value = 'Password must be at least 6 characters'
     return
   }
+
   authLoading.value = true
   authError.value = ''
+
   try {
     if (authMode.value === 'signup') {
       const userCredential = await createUserWithEmailAndPassword(auth, authForm.email, authForm.password)
@@ -928,12 +1049,15 @@ const handleAuth = async () => {
       user.value = userCredential.user
       console.log('User signed in successfully:', userCredential.user.email)
     }
+
     showAuthModal.value = false
     authForm.email = ''
     authForm.password = ''
     await loadForms()
+
   } catch (error) {
     console.error('Authentication error:', error)
+    
     switch (error.code) {
       case 'auth/email-already-in-use':
         authError.value = 'An account with this email already exists. Try signing in instead.'
@@ -966,6 +1090,7 @@ const handleAuth = async () => {
     authLoading.value = false
   }
 }
+
 const signOut = async () => {
   try {
     await firebaseSignOut(auth)
@@ -981,21 +1106,39 @@ const signOut = async () => {
     alert('Error signing out. Please try again.')
   }
 }
+
 const goHome = () => {
   isPublicForm.value = false
   publicForm.value = null
   currentView.value = user.value ? 'dashboard' : 'landing'
   window.history.replaceState({}, document.title, window.location.pathname)
 }
+
 const loadForms = async () => {
-  if (!user.value) return
+  if (!user.value) {
+    console.log('No user authenticated, skipping form load')
+    return
+  }
+
   loading.value = true
   try {
-    const q = query(
-      collection(db, 'forms'), 
-      where('userId', '==', user.value.uid), 
-      orderBy('createdAt', 'desc')
-    )
+    console.log('Loading forms for user:', user.value.uid)
+    
+    let q
+    try {
+      q = query(
+        collection(db, 'forms'), 
+        where('userId', '==', user.value.uid), 
+        orderBy('createdAt', 'desc')
+      )
+    } catch (indexError) {
+      console.log('Index not available, using simple query')
+      q = query(
+        collection(db, 'forms'), 
+        where('userId', '==', user.value.uid)
+      )
+    }
+    
     const querySnapshot = await getDocs(q)
     forms.value = querySnapshot.docs.map(doc => ({ 
       id: doc.id, 
@@ -1003,19 +1146,34 @@ const loadForms = async () => {
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date()
     }))
-    console.log(`Loaded ${forms.value.length} forms for user ${user.value.email}`)
+    
+    forms.value.sort((a, b) => b.createdAt - a.createdAt)
+    
+    console.log(`Successfully loaded ${forms.value.length} forms for user ${user.value.email}`)
   } catch (error) {
     console.error('Error loading forms:', error)
-    alert('Error loading forms. Please refresh the page.')
+    console.error('Error code:', error.code)
+    console.error('Error message:', error.message)
+    
+    if (error.code === 'failed-precondition' || error.message.includes('index')) {
+      alert('Database index required. Creating the index will take a few minutes. You can continue using the app, but forms may not be sorted by date.')
+      console.log('Index creation link should appear in console above')
+    } else if (error.code === 'permission-denied') {
+      alert('Permission denied. Please check your Firestore security rules.')
+    } else {
+      alert(`Error loading forms: ${error.message}`)
+    }
   } finally {
     loading.value = false
   }
 }
+
 const loadPublicForm = async (formId) => {
   loading.value = true
   try {
     const docRef = doc(db, 'forms', formId)
     const docSnap = await getDoc(docRef)
+    
     if (docSnap.exists()) {
       const formData = docSnap.data()
       publicForm.value = { 
@@ -1038,6 +1196,7 @@ const loadPublicForm = async (formId) => {
     loading.value = false
   }
 }
+
 const loadResponses = async (formId) => {
   loading.value = true
   try {
@@ -1052,6 +1211,7 @@ const loadResponses = async (formId) => {
       ...doc.data(),
       submittedAt: doc.data().submittedAt?.toDate() || new Date()
     }))
+    
     console.log(`Loaded ${responses.value.length} responses for form ${formId}`)
   } catch (error) {
     console.error('Error loading responses:', error)
@@ -1060,10 +1220,12 @@ const loadResponses = async (formId) => {
     loading.value = false
   }
 }
+
 const startNewForm = () => {
   resetCurrentForm()
   currentView.value = 'builder'
 }
+
 const addQuestion = (type) => {
   const question = {
     id: 'q' + generateUniqueId(),
@@ -1071,24 +1233,36 @@ const addQuestion = (type) => {
     question: '',
     required: false
   }
+  
   if (type === 'multiple') {
     question.options = ['Option 1', 'Option 2']
   }
+  
   currentForm.questions.push(question)
 }
+
 const removeQuestion = (index) => {
   currentForm.questions.splice(index, 1)
 }
+
 const saveForm = async () => {
   if (!currentForm.title.trim()) {
     alert('Please enter a form title')
     return
   }
+
   if (currentForm.questions.length === 0) {
     alert('Please add at least one question')
     return
   }
+
+  if (!user.value) {
+    alert('You must be logged in to save forms')
+    return
+  }
+
   saving.value = true
+
   try {
     const formData = {
       title: currentForm.title,
@@ -1099,36 +1273,53 @@ const saveForm = async () => {
       updatedAt: new Date(),
       responseCount: currentForm.responseCount || 0
     }
+
+    console.log('Saving form data:', formData)
+
     if (currentForm.id) {
+      console.log('Updating existing form:', currentForm.id)
       await updateDoc(doc(db, 'forms', currentForm.id), formData)
       const index = forms.value.findIndex(f => f.id === currentForm.id)
       if (index !== -1) {
         forms.value[index] = { id: currentForm.id, ...formData }
       }
-      console.log('Form updated:', currentForm.id)
+      console.log('Form updated successfully:', currentForm.id)
     } else {
+      console.log('Creating new form')
       const docRef = await addDoc(collection(db, 'forms'), formData)
       const newForm = { id: docRef.id, ...formData }
       forms.value.unshift(newForm)
       currentForm.id = docRef.id
-      console.log('New form created:', docRef.id)
+      console.log('New form created successfully:', docRef.id)
     }
+
     alert('Form saved successfully!')
     currentView.value = 'dashboard'
     resetCurrentForm()
   } catch (error) {
     console.error('Error saving form:', error)
-    alert('Error saving form. Please try again.')
+    console.error('Error code:', error.code)
+    console.error('Error message:', error.message)
+    console.error('User ID:', user.value?.uid)
+    
+    if (error.code === 'permission-denied') {
+      alert('Permission denied. Please check your Firestore security rules and ensure you are properly authenticated.')
+    } else {
+      alert(`Error saving form: ${error.message}`)
+    }
   } finally {
     saving.value = false
   }
 }
+
 const editForm = (form) => {
   Object.assign(currentForm, JSON.parse(JSON.stringify(form)))
   currentView.value = 'builder'
 }
+
 const deleteForm = async (formId) => {
   if (!confirm('Delete this form? This action cannot be undone.')) return
+
   try {
     await deleteDoc(doc(db, 'forms', formId))
     forms.value = forms.value.filter(f => f.id !== formId)
@@ -1138,11 +1329,13 @@ const deleteForm = async (formId) => {
     alert('Error deleting form. Please try again.')
   }
 }
+
 const viewResponses = async (form) => {
   selectedForm.value = form
   await loadResponses(form.id)
   currentView.value = 'responses'
 }
+
 const previewForm = (form) => {
   Object.assign(currentForm, JSON.parse(JSON.stringify(form)))
   currentQuestionIndex.value = 0
@@ -1150,21 +1343,25 @@ const previewForm = (form) => {
   previousView.value = 'dashboard'
   currentView.value = 'preview'
 }
+
 const previewCurrentForm = () => {
   if (currentForm.questions.length === 0) {
     alert('Add at least one question to preview')
     return
   }
+  
   currentQuestionIndex.value = 0
   formResponses.value = {}
   previousView.value = 'builder'
   currentView.value = 'preview'
 }
+
 const shareForm = (form) => {
   selectedFormForShare.value = form
   shareUrl.value = `${window.location.origin}?form=${form.id}`
   showShareModal.value = true
 }
+
 const shareCurrentForm = () => {
   if (!currentForm.id) {
     alert('Please save the form first to get a shareable link')
@@ -1174,6 +1371,7 @@ const shareCurrentForm = () => {
   shareUrl.value = `${window.location.origin}?form=${currentForm.id}`
   showShareModal.value = true
 }
+
 const copyShareUrl = async () => {
   try {
     await navigator.clipboard.writeText(shareUrl.value)
@@ -1189,11 +1387,13 @@ const copyShareUrl = async () => {
     alert('Link copied!')
   }
 }
+
 const exportResponses = () => {
   if (responses.value.length === 0) {
     alert('No responses to export')
     return
   }
+
   const headers = ['Submitted At', ...selectedForm.value.questions.map(q => q.question)]
   const csvContent = [
     headers.join(','),
@@ -1205,6 +1405,7 @@ const exportResponses = () => {
       return row.join(',')
     })
   ].join('\n')
+
   const blob = new Blob([csvContent], { type: 'text/csv' })
   const url = window.URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -1215,6 +1416,7 @@ const exportResponses = () => {
   document.body.removeChild(a)
   window.URL.revokeObjectURL(url)
 }
+
 const formatDate = (date) => {
   if (!date) return '-'
   return new Intl.DateTimeFormat('en-US', {
@@ -1225,6 +1427,7 @@ const formatDate = (date) => {
     minute: '2-digit'
   }).format(date)
 }
+
 const nextQuestion = async () => {
   if (currentQuestionIndex.value < currentForm.questions.length - 1) {
     currentQuestionIndex.value++
@@ -1233,11 +1436,13 @@ const nextQuestion = async () => {
     currentQuestionIndex.value++
   }
 }
+
 const previousQuestion = () => {
   if (currentQuestionIndex.value > 0) {
     currentQuestionIndex.value--
   }
 }
+
 const nextPublicQuestion = async () => {
   if (currentQuestionIndex.value < publicForm.value.questions.length - 1) {
     currentQuestionIndex.value++
@@ -1246,11 +1451,13 @@ const nextPublicQuestion = async () => {
     currentQuestionIndex.value++
   }
 }
+
 const previousPublicQuestion = () => {
   if (currentQuestionIndex.value > 0) {
     currentQuestionIndex.value--
   }
 }
+
 const submitForm = async () => {
   const responses = currentForm.questions.map((question, index) => ({
     questionId: question.id,
@@ -1258,8 +1465,10 @@ const submitForm = async () => {
     answer: formResponses.value[index] || '',
     type: question.type
   }))
+  
   console.log('Form submitted (preview):', responses)
 }
+
 const submitPublicForm = async () => {
   try {
     const startTime = Date.now()
@@ -1269,6 +1478,7 @@ const submitPublicForm = async () => {
       answer: publicFormResponses.value[index] || '',
       type: question.type
     }))
+
     const responseData = {
       formId: publicForm.value.id,
       responses,
@@ -1277,18 +1487,23 @@ const submitPublicForm = async () => {
       completionTime: Math.round((Date.now() - startTime) / 1000),
       responseId: 'resp_' + generateUniqueId()
     }
+
     await addDoc(collection(db, 'responses'), responseData)
     console.log('Response saved to Firestore:', responseData.responseId)
+
     await updateDoc(doc(db, 'forms', publicForm.value.id), {
       responseCount: increment(1),
       lastResponseAt: new Date()
     })
+
     showSubmissionSuccess.value = true
+
   } catch (error) {
     console.error('Error submitting form:', error)
     alert('Error submitting form. Please try again.')
   }
 }
+
 const resetCurrentForm = () => {
   Object.assign(currentForm, {
     id: null,
@@ -1300,8 +1515,10 @@ const resetCurrentForm = () => {
     responseCount: 0
   })
 }
+
 onMounted(async () => {
   await checkForPublicForm()
+
   onAuthStateChanged(auth, async (firebaseUser) => {
     if (firebaseUser) {
       user.value = firebaseUser
@@ -1325,9 +1542,11 @@ onMounted(async () => {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
 .animate-spin {
   animation: spin 1s linear infinite;
 }
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
