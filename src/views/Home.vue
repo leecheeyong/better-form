@@ -1,6 +1,5 @@
 <template>
   <div id="app" class="min-h-screen bg-gray-50">
-    <!-- Navigation -->
     <nav class="bg-white border-b border-gray-100 sticky top-0 z-40">
       <div class="max-w-6xl mx-auto px-6">
         <div class="flex justify-between items-center h-16">
@@ -44,7 +43,6 @@
       </div>
     </nav>
 
-    <!-- Auth Modal -->
     <div v-if="showAuthModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-2xl p-8 max-w-md w-full">
         <div class="text-center mb-8">
@@ -56,7 +54,6 @@
           </p>
         </div>
 
-        <!-- Error Message -->
         <div v-if="authError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p class="text-red-600 text-sm">{{ authError }}</p>
         </div>
@@ -109,13 +106,10 @@
       </div>
     </div>
 
-    <!-- Main Content -->
     <main class="max-w-6xl mx-auto px-6 py-8">
-      <!-- Public Form View -->
       <div v-if="isPublicForm && publicForm">
         <div class="max-w-2xl mx-auto">
           <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <!-- Progress -->
             <div class="h-1 bg-gray-100">
               <div
                 class="h-full bg-black transition-all duration-500"
@@ -123,13 +117,11 @@
               ></div>
             </div>
 
-            <!-- Header -->
             <div class="p-8 text-center border-b border-gray-100">
               <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ publicForm.title }}</h1>
               <p v-if="publicForm.description" class="text-gray-600">{{ publicForm.description }}</p>
             </div>
 
-            <!-- Question -->
             <div class="p-8 min-h-[400px] flex flex-col justify-center">
               <div v-if="currentQuestionIndex < publicForm.questions.length" class="space-y-8">
                 <div class="text-center">
@@ -143,7 +135,6 @@
                   <span v-if="publicForm.questions[currentQuestionIndex].required" class="text-red-500">*</span>
                 </h2>
 
-                <!-- Text/Email Input -->
                 <div v-if="['text', 'email'].includes(publicForm.questions[currentQuestionIndex].type)">
                   <input
                     v-model="publicFormResponses[currentQuestionIndex]"
@@ -154,7 +145,6 @@
                   >
                 </div>
 
-                <!-- Multiple Choice -->
                 <div v-else-if="publicForm.questions[currentQuestionIndex].type === 'multiple'" class="space-y-3">
                   <button
                     v-for="(option, optionIndex) in publicForm.questions[currentQuestionIndex].options"
@@ -171,7 +161,6 @@
                   </button>
                 </div>
 
-                <!-- Rating -->
                 <div v-else-if="publicForm.questions[currentQuestionIndex].type === 'rating'">
                   <div class="flex justify-center space-x-2">
                     <button
@@ -191,7 +180,6 @@
                 </div>
               </div>
 
-              <!-- Thank You -->
               <div v-else class="text-center space-y-6">
                 <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto">
                   <Check class="w-8 h-8 text-green-600" />
@@ -207,7 +195,6 @@
               </div>
             </div>
 
-            <!-- Navigation -->
             <div v-if="currentQuestionIndex < publicForm.questions.length" class="p-6 bg-gray-50 flex justify-between items-center">
               <button
                 v-if="currentQuestionIndex > 0"
@@ -237,7 +224,6 @@
         </div>
       </div>
 
-      <!-- Form Not Found -->
       <div v-else-if="isPublicForm && !publicForm && !loading">
         <div class="text-center py-20">
           <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -254,7 +240,6 @@
         </div>
       </div>
 
-      <!-- Loading Public Form -->
       <div v-else-if="isPublicForm && loading">
         <div class="text-center py-20">
           <div class="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full mx-auto mb-4"></div>
@@ -262,7 +247,6 @@
         </div>
       </div>
 
-      <!-- Landing Page -->
       <div v-else-if="!user" class="text-center py-20">
         <h1 class="text-5xl font-bold text-gray-900 mb-6 leading-tight">
           Forms that people<br>
@@ -280,7 +264,6 @@
           Start Building
         </button>
         
-        <!-- Features -->
         <div class="grid md:grid-cols-3 gap-8 mt-24">
           <div class="text-center">
             <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
@@ -306,7 +289,6 @@
         </div>
       </div>
 
-      <!-- Dashboard -->
       <div v-else-if="currentView === 'dashboard'">
         <div class="flex justify-between items-center mb-8">
           <div>
@@ -322,13 +304,11 @@
           </button>
         </div>
 
-        <!-- Loading State -->
         <div v-if="loading" class="text-center py-20">
           <div class="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full mx-auto mb-4"></div>
           <p class="text-gray-600">Loading your forms...</p>
         </div>
 
-        <!-- Empty State -->
         <div v-else-if="forms.length === 0" class="text-center py-20">
           <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <FileText class="w-8 h-8 text-gray-400" />
@@ -343,7 +323,6 @@
           </button>
         </div>
 
-        <!-- Forms Grid -->
         <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
             v-for="form in forms"
@@ -409,7 +388,6 @@
         </div>
       </div>
 
-      <!-- Form Builder -->
       <div v-else-if="currentView === 'builder'">
         <div class="flex justify-between items-center mb-8">
           <div class="flex items-center space-x-4">
@@ -443,7 +421,6 @@
         </div>
 
         <div class="grid lg:grid-cols-4 gap-8">
-          <!-- Sidebar -->
           <div class="lg:col-span-1">
             <div class="bg-white rounded-2xl p-6 border border-gray-100 sticky top-24">
               <h3 class="font-semibold mb-6 text-gray-900">Form Settings</h3>
@@ -514,7 +491,6 @@
             </div>
           </div>
 
-          <!-- Questions -->
           <div class="lg:col-span-3">
             <div v-if="currentForm.questions.length === 0" class="text-center py-20 bg-white rounded-2xl border border-gray-100">
               <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -555,7 +531,6 @@
                     >
                   </div>
 
-                  <!-- Multiple Choice Options -->
                   <div v-if="question.type === 'multiple'" class="space-y-3">
                     <div
                       v-for="(option, optionIndex) in question.options"
@@ -602,7 +577,6 @@
         </div>
       </div>
 
-      <!-- Responses View -->
       <div v-else-if="currentView === 'responses'">
         <div class="flex justify-between items-center mb-8">
           <div class="flex items-center space-x-4">
@@ -628,7 +602,6 @@
           </div>
         </div>
 
-        <!-- Response Stats -->
         <div class="grid md:grid-cols-4 gap-6 mb-8">
           <div class="bg-white rounded-2xl p-6 border border-gray-100">
             <div class="flex items-center justify-between">
@@ -676,7 +649,6 @@
           </div>
         </div>
 
-        <!-- Responses Table -->
         <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
           <div class="p-6 border-b border-gray-100">
             <h3 class="text-lg font-semibold text-gray-900">Recent Responses</h3>
@@ -724,7 +696,6 @@
         </div>
       </div>
 
-      <!-- Form Preview -->
       <div v-else-if="currentView === 'preview'">
         <div class="flex justify-between items-center mb-8">
           <button
@@ -743,10 +714,8 @@
           </button>
         </div>
 
-        <!-- Form Preview (same structure as public form) -->
         <div class="max-w-2xl mx-auto">
           <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <!-- Progress -->
             <div class="h-1 bg-gray-100">
               <div
                 class="h-full bg-black transition-all duration-500"
@@ -754,13 +723,11 @@
               ></div>
             </div>
 
-            <!-- Header -->
             <div class="p-8 text-center border-b border-gray-100">
               <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ currentForm.title || 'Untitled Form' }}</h1>
               <p v-if="currentForm.description" class="text-gray-600">{{ currentForm.description }}</p>
             </div>
 
-            <!-- Question -->
             <div class="p-8 min-h-[400px] flex flex-col justify-center">
               <div v-if="currentQuestionIndex < currentForm.questions.length" class="space-y-8">
                 <div class="text-center">
@@ -774,7 +741,6 @@
                   <span v-if="currentForm.questions[currentQuestionIndex].required" class="text-red-500">*</span>
                 </h2>
 
-                <!-- Text/Email Input -->
                 <div v-if="['text', 'email'].includes(currentForm.questions[currentQuestionIndex].type)">
                   <input
                     v-model="formResponses[currentQuestionIndex]"
@@ -784,7 +750,6 @@
                   >
                 </div>
 
-                <!-- Multiple Choice -->
                 <div v-else-if="currentForm.questions[currentQuestionIndex].type === 'multiple'" class="space-y-3">
                   <button
                     v-for="(option, optionIndex) in currentForm.questions[currentQuestionIndex].options"
@@ -801,7 +766,6 @@
                   </button>
                 </div>
 
-                <!-- Rating -->
                 <div v-else-if="currentForm.questions[currentQuestionIndex].type === 'rating'">
                   <div class="flex justify-center space-x-2">
                     <button
@@ -821,7 +785,6 @@
                 </div>
               </div>
 
-              <!-- Thank You -->
               <div v-else class="text-center space-y-6">
                 <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto">
                   <Check class="w-8 h-8 text-green-600" />
@@ -831,7 +794,6 @@
               </div>
             </div>
 
-            <!-- Navigation -->
             <div v-if="currentQuestionIndex < currentForm.questions.length" class="p-6 bg-gray-50 flex justify-between items-center">
               <button
                 v-if="currentQuestionIndex > 0"
@@ -862,7 +824,6 @@
       </div>
     </main>
 
-    <!-- Share Modal -->
     <div v-if="showShareModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-2xl p-8 max-w-md w-full">
         <div class="flex justify-between items-center mb-6">
@@ -897,7 +858,6 @@
       </div>
     </div>
 
-    <!-- Submission Success Modal -->
     <div v-if="showSubmissionSuccess" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-2xl p-8 max-w-md w-full text-center">
         <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -928,12 +888,12 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, getDoc, query, where, orderBy, increment } from 'firebase/firestore'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDaiT2hVJvKMpWbWo9WhM-0iuuzVN6a_ms",
+  apiKey: import.meta.env.VITE_API_KEY,
   authDomain: "better-form-95050.firebaseapp.com",
   projectId: "better-form-95050",
   storageBucket: "better-form-95050.firebasestorage.app",
   messagingSenderId: "821126413132",
-  appId: "1:821126413132:web:b15d07cdbcd7b0323bade9"
+  appId: "1:821126413132:web:52814580a0ba8e3e3bade9"
 }
 
 const app = initializeApp(firebaseConfig)
