@@ -1561,11 +1561,15 @@ const loadPublicForm = async (formId) => {
 
     if (docSnap.exists()) {
       const formData = docSnap.data();
+      let createdAt = formData.createdAt;
+      let updatedAt = formData.updatedAt;
+      if (createdAt && typeof createdAt.toDate === 'function') createdAt = createdAt.toDate();
+      if (updatedAt && typeof updatedAt.toDate === 'function') updatedAt = updatedAt.toDate();
       publicForm.value = {
         id: docSnap.id,
         ...formData,
-        createdAt: formData.createdAt?.toDate() || new Date(),
-        updatedAt: formData.updatedAt?.toDate() || new Date(),
+        createdAt: createdAt || new Date(),
+        updatedAt: updatedAt || new Date(),
       };
       currentQuestionIndex.value = 0;
       publicFormResponses.value = {};
@@ -1873,7 +1877,6 @@ const submitPublicForm = async () => {
     });
 
     showSubmissionSuccess.value = true;
-    showAlert('Response submitted!', 'success');
   } catch (error) {
     showAlert('Error submitting form. Please try again.', 'error');
   }
