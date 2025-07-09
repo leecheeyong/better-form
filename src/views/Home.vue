@@ -79,13 +79,6 @@
           </p>
         </div>
 
-        <div
-          v-if="authError"
-          class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg"
-        >
-          <p class="text-red-600 text-sm">{{ authError }}</p>
-        </div>
-
         <form @submit.prevent="handleAuth" class="space-y-4">
           <div>
             <input
@@ -1172,6 +1165,58 @@
         >
           Close
         </button>
+        <button
+          v-if="user && currentForm.id && currentView === 'preview'"
+          @click="() => { showSubmissionSuccess = false; viewResponses(currentForm); }"
+          class="ml-4 bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors"
+        >
+          View Responses
+        </button>
+      </div>
+    </div>
+
+    <div
+      v-if="globalAlert.message"
+      class="fixed inset-x-0 bottom-4 z-50 mx-auto max-w-md w-full"
+    >
+      <div
+        v-if="globalAlert.type === 'error'"
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-md flex items-center justify-between"
+        role="alert"
+      >
+        <div>
+          <p class="font-semibold">Error</p>
+          <p class="text-sm">{{ globalAlert.message }}</p>
+        </div>
+        <button @click="globalAlert.message = ''" class="ml-4 text-red-400 hover:text-red-700">
+          <X class="w-5 h-5" />
+        </button>
+      </div>
+      <div
+        v-else-if="globalAlert.type === 'success'"
+        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-md flex items-center justify-between"
+        role="alert"
+      >
+        <div>
+          <p class="font-semibold">Success</p>
+          <p class="text-sm">{{ globalAlert.message }}</p>
+        </div>
+        <button @click="globalAlert.message = ''" class="ml-4 text-green-400 hover:text-green-700">
+          <X class="w-5 h-5" />
+        </button>
+      </div>
+      <div
+        v-else
+        class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg shadow-md flex items-center justify-between"
+        role="alert"
+      >
+        <div>
+          <p class="font-semibold">Info</p>
+          <p class="text-sm">{{ globalAlert.message }}</p>
+        </div>
+        <button @click="globalAlert.message = ''" class="ml-4 text-blue-400 hover:text-blue-700">
+          <X class="w-5 h-5" />
+        </button>
       </div>
     </div>
   </div>
@@ -1281,12 +1326,21 @@ const isPublicForm = ref(false);
 const publicForm = ref(null);
 const publicFormResponses = ref({});
 
+const globalAlert = reactive({
+  message: '',
+  type: 'info', // 'info', 'error', 'success'
+});
+
 const weeklyResponses = computed(() => {
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-  return responses.value.filter(
-    (r) => r.submittedAt && r.submittedAt.toDate() > oneWeekAgo,
-  ).length;
+  return responses.value.filter((r) => {
+    let date = r.submittedAt;
+    if (date && typeof date.toDate === 'function') {
+      date = date.toDate();
+    }
+    return date > oneWeekAgo;
+  }).length;
 });
 
 const completionRate = computed(() => {
@@ -1336,19 +1390,29 @@ const checkForPublicForm = async () => {
   }
 };
 
+const showAlert = (message, type = 'info', timeout = 5000) => {
+  globalAlert.message = message;
+  globalAlert.type = type;
+  if (timeout > 0) {
+    setTimeout(() => {
+      if (globalAlert.message === message) globalAlert.message = '';
+    }, timeout);
+  }
+};
+
 const handleAuth = async () => {
   if (!authForm.email || !authForm.password) {
-    authError.value = "Please fill in all fields";
+    showAlert('Please fill in all fields', 'error');
     return;
   }
 
   if (authForm.password.length < 6) {
-    authError.value = "Password must be at least 6 characters";
+    showAlert('Password must be at least 6 characters', 'error');
     return;
   }
 
   authLoading.value = true;
-  authError.value = "";
+  authError.value = '';
 
   try {
     if (authMode.value === "signup") {
@@ -1358,7 +1422,7 @@ const handleAuth = async () => {
         authForm.password,
       );
       user.value = userCredential.user;
-      console.log("User created successfully:", userCredential.user.email);
+      showAlert('Account created successfully!', 'success');
     } else {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -1366,50 +1430,44 @@ const handleAuth = async () => {
         authForm.password,
       );
       user.value = userCredential.user;
-      console.log("User signed in successfully:", userCredential.user.email);
+      showAlert('Signed in successfully!', 'success');
     }
 
     showAuthModal.value = false;
-    authForm.email = "";
-    authForm.password = "";
+    authForm.email = '';
+    authForm.password = '';
     await loadForms();
   } catch (error) {
-    console.error("Authentication error:", error);
-
+    let msg = '';
     switch (error.code) {
       case "auth/email-already-in-use":
-        authError.value =
-          "An account with this email already exists. Try signing in instead.";
+        msg = "An account with this email already exists. Try signing in instead.";
         break;
       case "auth/weak-password":
-        authError.value =
-          "Password is too weak. Please choose a stronger password.";
+        msg = "Password is too weak. Please choose a stronger password.";
         break;
       case "auth/invalid-email":
-        authError.value = "Please enter a valid email address.";
+        msg = "Please enter a valid email address.";
         break;
       case "auth/user-not-found":
-        authError.value =
-          "No account found with this email. Try signing up instead.";
+        msg = "No account found with this email. Try signing up instead.";
         break;
       case "auth/wrong-password":
-        authError.value = "Incorrect password. Please try again.";
+        msg = "Incorrect password. Please try again.";
         break;
       case "auth/invalid-credential":
-        authError.value =
-          "Invalid email or password. Please check your credentials.";
+        msg = "Invalid email or password. Please check your credentials.";
         break;
       case "auth/too-many-requests":
-        authError.value = "Too many failed attempts. Please try again later.";
+        msg = "Too many failed attempts. Please try again later.";
         break;
       case "auth/network-request-failed":
-        authError.value =
-          "Network error. Please check your internet connection.";
+        msg = "Network error. Please check your internet connection.";
         break;
       default:
-        authError.value =
-          error.message || "Authentication failed. Please try again.";
+        msg = error.message || "Authentication failed. Please try again.";
     }
+    showAlert(msg, 'error');
   } finally {
     authLoading.value = false;
   }
@@ -1424,10 +1482,9 @@ const signOut = async () => {
     currentView.value = "dashboard";
     isPublicForm.value = false;
     publicForm.value = null;
-    console.log("User signed out successfully");
+    showAlert('Signed out successfully!', 'success');
   } catch (error) {
-    console.error("Sign out error:", error);
-    alert("Error signing out. Please try again.");
+    showAlert('Error signing out. Please try again.', 'error');
   }
 };
 
@@ -1577,17 +1634,17 @@ const removeQuestion = (index) => {
 
 const saveForm = async () => {
   if (!currentForm.title.trim()) {
-    alert("Please enter a form title");
+    showAlert('Please enter a form title', 'error');
     return;
   }
 
   if (currentForm.questions.length === 0) {
-    alert("Please add at least one question");
+    showAlert('Please add at least one question', 'error');
     return;
   }
 
   if (!user.value) {
-    alert("You must be logged in to save forms");
+    showAlert('You must be logged in to save forms', 'error');
     return;
   }
 
@@ -1604,40 +1661,27 @@ const saveForm = async () => {
       responseCount: currentForm.responseCount || 0,
     };
 
-    console.log("Saving form data:", formData);
-
     if (currentForm.id) {
-      console.log("Updating existing form:", currentForm.id);
       await updateDoc(doc(db, "forms", currentForm.id), formData);
       const index = forms.value.findIndex((f) => f.id === currentForm.id);
       if (index !== -1) {
         forms.value[index] = { id: currentForm.id, ...formData };
       }
-      console.log("Form updated successfully:", currentForm.id);
     } else {
-      console.log("Creating new form");
       const docRef = await addDoc(collection(db, "forms"), formData);
       const newForm = { id: docRef.id, ...formData };
       forms.value.unshift(newForm);
       currentForm.id = docRef.id;
-      console.log("New form created successfully:", docRef.id);
     }
 
-    alert("Form saved successfully!");
+    showAlert('Form saved successfully!', 'success');
     currentView.value = "dashboard";
     resetCurrentForm();
   } catch (error) {
-    console.error("Error saving form:", error);
-    console.error("Error code:", error.code);
-    console.error("Error message:", error.message);
-    console.error("User ID:", user.value?.uid);
-
     if (error.code === "permission-denied") {
-      alert(
-        "Permission denied. Please check your Firestore security rules and ensure you are properly authenticated.",
-      );
+      showAlert('Permission denied. Please check your Firestore security rules and ensure you are properly authenticated.', 'error', 8000);
     } else {
-      alert(`Error saving form: ${error.message}`);
+      showAlert(`Error saving form: ${error.message}`, 'error', 8000);
     }
   } finally {
     saving.value = false;
@@ -1655,10 +1699,9 @@ const deleteForm = async (formId) => {
   try {
     await deleteDoc(doc(db, "forms", formId));
     forms.value = forms.value.filter((f) => f.id !== formId);
-    console.log("Form deleted:", formId);
+    showAlert('Form deleted.', 'success');
   } catch (error) {
-    console.error("Error deleting form:", error);
-    alert("Error deleting form. Please try again.");
+    showAlert('Error deleting form. Please try again.', 'error');
   }
 };
 
@@ -1707,22 +1750,21 @@ const shareCurrentForm = () => {
 const copyShareUrl = async () => {
   try {
     await navigator.clipboard.writeText(shareUrl.value);
-    alert("Link copied to clipboard!");
+    showAlert('Link copied to clipboard!', 'success');
   } catch (err) {
-    console.error("Copy failed:", err);
     const textArea = document.createElement("textarea");
     textArea.value = shareUrl.value;
     document.body.appendChild(textArea);
     textArea.select();
     document.execCommand("copy");
     document.body.removeChild(textArea);
-    alert("Link copied!");
+    showAlert('Link copied!', 'success');
   }
 };
 
 const exportResponses = () => {
   if (responses.value.length === 0) {
-    alert("No responses to export");
+    showAlert('No responses to export', 'error');
     return;
   }
 
@@ -1750,6 +1792,7 @@ const exportResponses = () => {
   a.click();
   document.body.removeChild(a);
   window.URL.revokeObjectURL(url);
+  showAlert('Responses exported as CSV.', 'success');
 };
 
 const formatDate = (date) => {
@@ -1824,17 +1867,15 @@ const submitPublicForm = async () => {
     };
 
     await addDoc(collection(db, "responses"), responseData);
-    console.log("Response saved to Firestore:", responseData.responseId);
-
     await updateDoc(doc(db, "forms", publicForm.value.id), {
       responseCount: increment(1),
       lastResponseAt: new Date(),
     });
 
     showSubmissionSuccess.value = true;
+    showAlert('Response submitted!', 'success');
   } catch (error) {
-    console.error("Error submitting form:", error);
-    alert("Error submitting form. Please try again.");
+    showAlert('Error submitting form. Please try again.', 'error');
   }
 };
 
@@ -1890,3 +1931,4 @@ onMounted(async () => {
   }
 }
 </style>
+
