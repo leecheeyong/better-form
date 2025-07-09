@@ -293,24 +293,33 @@
               <div v-else></div>
 
               <button
+                v-if="currentQuestionIndex < publicForm.questions.length - 1"
                 @click="nextPublicQuestion"
                 :disabled="
-                  isPublicQuestionRequired &&
-                  !publicFormResponses[currentQuestionIndex]
+                  submitting || (isPublicQuestionRequired && !publicFormResponses[currentQuestionIndex])
                 "
                 :class="[
                   'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
-                  isPublicQuestionRequired &&
-                  !publicFormResponses[currentQuestionIndex]
+                  (submitting || (isPublicQuestionRequired && !publicFormResponses[currentQuestionIndex]))
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                     : 'bg-black text-white hover:bg-gray-800',
                 ]"
               >
-                <span>{{
-                  currentQuestionIndex === publicForm.questions.length - 1
-                    ? "Submit"
-                    : "Next"
-                }}</span>
+                <span>Next</span>
+                <ChevronRight class="w-4 h-4" />
+              </button>
+              <button
+                v-else
+                @click="submitPublicForm"
+                :disabled="submitting || (isPublicQuestionRequired && !publicFormResponses[currentQuestionIndex])"
+                :class="[
+                  'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
+                  (submitting || (isPublicQuestionRequired && !publicFormResponses[currentQuestionIndex]))
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-black text-white hover:bg-gray-800',
+                ]"
+              >
+                <span>Submit</span>
                 <ChevronRight class="w-4 h-4" />
               </button>
             </div>
@@ -1144,38 +1153,6 @@
     </div>
 
     <div
-      v-if="showSubmissionSuccess"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-    >
-      <div class="bg-white rounded-2xl p-8 max-w-md w-full text-center">
-        <div
-          class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4"
-        >
-          <Check class="w-8 h-8 text-green-600" />
-        </div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">
-          Response Submitted!
-        </h3>
-        <p class="text-gray-600 mb-6">
-          Your form response has been successfully saved to Firebase.
-        </p>
-        <button
-          @click="showSubmissionSuccess = false"
-          class="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-colors"
-        >
-          Close
-        </button>
-        <button
-          v-if="user && currentForm.id && currentView === 'preview'"
-          @click="() => { showSubmissionSuccess = false; viewResponses(currentForm); }"
-          class="ml-4 bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors"
-        >
-          View Responses
-        </button>
-      </div>
-    </div>
-
-    <div
       v-if="globalAlert.message"
       class="fixed inset-x-0 bottom-4 z-50 mx-auto max-w-md w-full"
     >
@@ -1518,12 +1495,19 @@ const loadForms = async () => {
     }
 
     const querySnapshot = await getDocs(q);
-    forms.value = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate() || new Date(),
-      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-    }));
+    forms.value = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      let createdAt = data.createdAt;
+      let updatedAt = data.updatedAt;
+      if (createdAt && typeof createdAt.toDate === 'function') createdAt = createdAt.toDate();
+      if (updatedAt && typeof updatedAt.toDate === 'function') updatedAt = updatedAt.toDate();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: createdAt || new Date(),
+        updatedAt: updatedAt || new Date(),
+      };
+    });
 
     forms.value.sort((a, b) => b.createdAt - a.createdAt);
 
@@ -1828,30 +1812,14 @@ const previousQuestion = () => {
 const nextPublicQuestion = async () => {
   if (currentQuestionIndex.value < publicForm.value.questions.length - 1) {
     currentQuestionIndex.value++;
-  } else {
-    await submitPublicForm();
-    currentQuestionIndex.value++;
   }
 };
 
-const previousPublicQuestion = () => {
-  if (currentQuestionIndex.value > 0) {
-    currentQuestionIndex.value--;
-  }
-};
-
-const submitForm = async () => {
-  const responses = currentForm.questions.map((question, index) => ({
-    questionId: question.id,
-    question: question.question,
-    answer: formResponses.value[index] || "",
-    type: question.type,
-  }));
-
-  console.log("Form submitted (preview):", responses);
-};
+const submitting = ref(false);
 
 const submitPublicForm = async () => {
+  if (submitting.value) return;
+  submitting.value = true;
   try {
     const startTime = Date.now();
     const responses = publicForm.value.questions.map((question, index) => ({
@@ -1876,9 +1844,11 @@ const submitPublicForm = async () => {
       lastResponseAt: new Date(),
     });
 
-    showSubmissionSuccess.value = true;
+    currentQuestionIndex.value++;
   } catch (error) {
     showAlert('Error submitting form. Please try again.', 'error');
+  } finally {
+    submitting.value = false;
   }
 };
 
