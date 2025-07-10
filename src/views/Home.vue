@@ -296,11 +296,15 @@
                 v-if="currentQuestionIndex < publicForm.questions.length - 1"
                 @click="nextPublicQuestion"
                 :disabled="
-                  submitting || (isPublicQuestionRequired && !publicFormResponses[currentQuestionIndex])
+                  submitting ||
+                  (isPublicQuestionRequired &&
+                    !publicFormResponses[currentQuestionIndex])
                 "
                 :class="[
                   'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
-                  (submitting || (isPublicQuestionRequired && !publicFormResponses[currentQuestionIndex]))
+                  submitting ||
+                  (isPublicQuestionRequired &&
+                    !publicFormResponses[currentQuestionIndex])
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                     : 'bg-black text-white hover:bg-gray-800',
                 ]"
@@ -311,10 +315,16 @@
               <button
                 v-else
                 @click="submitPublicForm"
-                :disabled="submitting || (isPublicQuestionRequired && !publicFormResponses[currentQuestionIndex])"
+                :disabled="
+                  submitting ||
+                  (isPublicQuestionRequired &&
+                    !publicFormResponses[currentQuestionIndex])
+                "
                 :class="[
                   'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
-                  (submitting || (isPublicQuestionRequired && !publicFormResponses[currentQuestionIndex]))
+                  submitting ||
+                  (isPublicQuestionRequired &&
+                    !publicFormResponses[currentQuestionIndex])
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                     : 'bg-black text-white hover:bg-gray-800',
                 ]"
@@ -421,687 +431,6 @@
           </div>
         </div>
       </div>
-
-      <div v-else-if="currentView === 'dashboard'">
-        <div class="flex justify-between items-center mb-8">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Your Forms</h1>
-            <p class="text-gray-600">
-              {{ forms.length }}
-              {{ forms.length === 1 ? "form" : "forms" }} created
-            </p>
-          </div>
-          <button
-            @click="startNewForm"
-            class="bg-black text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
-          >
-            <Plus class="w-5 h-5" />
-            <span>New Form</span>
-          </button>
-        </div>
-
-        <div v-if="loading" class="text-center py-20">
-          <div
-            class="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full mx-auto mb-4"
-          ></div>
-          <p class="text-gray-600">Loading your forms...</p>
-        </div>
-
-        <div v-else-if="forms.length === 0" class="text-center py-20">
-          <div
-            class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6"
-          >
-            <FileText class="w-8 h-8 text-gray-400" />
-          </div>
-          <h3 class="text-xl font-semibold text-gray-900 mb-3">
-            Create your first form
-          </h3>
-          <p class="text-gray-600 mb-8 max-w-md mx-auto">
-            Start building beautiful, interactive forms that your audience will
-            love to complete.
-          </p>
-          <button
-            @click="startNewForm"
-            class="bg-black text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors"
-          >
-            Create Form
-          </button>
-        </div>
-
-        <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div
-            v-for="form in forms"
-            :key="form.id"
-            class="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 transition-all hover:shadow-sm group"
-          >
-            <div class="flex justify-between items-start mb-4">
-              <h3 class="text-lg font-semibold text-gray-900 truncate pr-4">
-                {{ form.title || "Untitled Form" }}
-              </h3>
-              <div
-                class="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <button
-                  @click="editForm(form)"
-                  class="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-50"
-                >
-                  <Edit2 class="w-4 h-4" />
-                </button>
-                <button
-                  @click="viewResponses(form)"
-                  class="p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-gray-50"
-                >
-                  <BarChart3 class="w-4 h-4" />
-                </button>
-                <button
-                  @click="deleteForm(form.id)"
-                  class="p-2 text-gray-400 hover:text-red-600 transition-colors rounded-lg hover:bg-gray-50"
-                >
-                  <Trash2 class="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            <p class="text-gray-600 text-sm mb-4 line-clamp-2">
-              {{ form.description || "No description" }}
-            </p>
-
-            <div
-              class="text-xs text-gray-500 mb-4 font-mono bg-gray-50 px-2 py-1 rounded"
-            >
-              ID: {{ form.id }}
-            </div>
-
-            <div class="flex justify-between items-center text-sm mb-4">
-              <span class="text-gray-500"
-                >{{ form.questions?.length || 0 }} questions</span
-              >
-              <span class="text-green-600 font-medium"
-                >{{ form.responseCount || 0 }} responses</span
-              >
-            </div>
-
-            <div class="flex justify-between items-center text-sm">
-              <div class="flex space-x-3">
-                <button
-                  @click="previewForm(form)"
-                  class="text-gray-600 hover:text-gray-900 font-medium transition-colors"
-                >
-                  Preview
-                </button>
-                <button
-                  @click="shareForm(form)"
-                  class="text-black font-medium hover:text-gray-700 transition-colors"
-                >
-                  Share
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-else-if="currentView === 'builder'">
-        <div class="flex justify-between items-center mb-8">
-          <div class="flex items-center space-x-4">
-            <button
-              @click="currentView = 'dashboard'"
-              class="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
-            >
-              <ArrowLeft class="w-5 h-5" />
-            </button>
-            <div>
-              <h1 class="text-2xl font-bold text-gray-900">Form Builder</h1>
-              <p class="text-gray-600">Design your form step by step</p>
-              <p v-if="currentForm.id" class="text-xs text-gray-500 font-mono">
-                ID: {{ currentForm.id }}
-              </p>
-            </div>
-          </div>
-          <div class="flex space-x-3">
-            <button
-              @click="previewCurrentForm"
-              class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-            >
-              Preview
-            </button>
-            <button
-              @click="saveForm"
-              :disabled="saving"
-              class="bg-black text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50"
-            >
-              {{ saving ? "Saving..." : "Save" }}
-            </button>
-          </div>
-        </div>
-
-        <div class="grid lg:grid-cols-4 gap-8">
-          <div class="lg:col-span-1">
-            <div
-              class="bg-white rounded-2xl p-6 border border-gray-100 sticky top-24"
-            >
-              <h3 class="font-semibold mb-6 text-gray-900">Form Settings</h3>
-
-              <div class="space-y-6">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Title</label
-                  >
-                  <input
-                    v-model="currentForm.title"
-                    type="text"
-                    placeholder="Form title"
-                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Description</label
-                  >
-                  <textarea
-                    v-model="currentForm.description"
-                    placeholder="Brief description"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all resize-none"
-                  ></textarea>
-                </div>
-
-                <div class="bg-blue-50 p-3 rounded-lg">
-                  <div class="flex items-center space-x-2 mb-2">
-                    <Database class="w-4 h-4 text-blue-600" />
-                    <span class="text-sm font-medium text-blue-900"
-                      >Firebase Storage</span
-                    >
-                  </div>
-                  <p class="text-xs text-blue-700">
-                    All responses are automatically stored in Firebase Firestore
-                    with real-time analytics.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 class="text-sm font-medium text-gray-700 mb-3">
-                    Add Question
-                  </h4>
-                  <div class="space-y-2">
-                    <button
-                      @click="addQuestion('text')"
-                      class="w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left flex items-center space-x-3"
-                    >
-                      <Type class="w-4 h-4 text-gray-500" />
-                      <span class="text-sm">Text Input</span>
-                    </button>
-                    <button
-                      @click="addQuestion('multiple')"
-                      class="w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left flex items-center space-x-3"
-                    >
-                      <CheckSquare class="w-4 h-4 text-gray-500" />
-                      <span class="text-sm">Multiple Choice</span>
-                    </button>
-                    <button
-                      @click="addQuestion('email')"
-                      class="w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left flex items-center space-x-3"
-                    >
-                      <Mail class="w-4 h-4 text-gray-500" />
-                      <span class="text-sm">Email</span>
-                    </button>
-                    <button
-                      @click="addQuestion('rating')"
-                      class="w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left flex items-center space-x-3"
-                    >
-                      <Star class="w-4 h-4 text-gray-500" />
-                      <span class="text-sm">Rating</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="lg:col-span-3">
-            <div
-              v-if="currentForm.questions.length === 0"
-              class="text-center py-20 bg-white rounded-2xl border border-gray-100"
-            >
-              <div
-                class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4"
-              >
-                <HelpCircle class="w-6 h-6 text-gray-400" />
-              </div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                Add your first question
-              </h3>
-              <p class="text-gray-600">
-                Choose a question type from the sidebar to get started.
-              </p>
-            </div>
-
-            <div v-else class="space-y-4">
-              <div
-                v-for="(question, index) in currentForm.questions"
-                :key="question.id"
-                class="bg-white rounded-2xl p-6 border border-gray-100"
-              >
-                <div class="flex justify-between items-start mb-6">
-                  <div class="flex items-center space-x-3">
-                    <div
-                      class="w-8 h-8 bg-gray-100 text-gray-600 rounded-lg flex items-center justify-center text-sm font-medium"
-                    >
-                      {{ index + 1 }}
-                    </div>
-                    <span class="text-sm text-gray-500 capitalize"
-                      >{{ question.type }} Question</span
-                    >
-                  </div>
-                  <button
-                    @click="removeQuestion(index)"
-                    class="p-2 text-gray-400 hover:text-red-600 transition-colors rounded-lg hover:bg-gray-50"
-                  >
-                    <Trash2 class="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div class="space-y-4">
-                  <div>
-                    <input
-                      v-model="question.question"
-                      type="text"
-                      placeholder="Enter your question"
-                      class="w-full px-0 py-2 text-lg font-medium border-0 border-b-2 border-gray-200 focus:border-black focus:ring-0 transition-colors bg-transparent"
-                    />
-                  </div>
-
-                  <div v-if="question.type === 'multiple'" class="space-y-3">
-                    <div
-                      v-for="(option, optionIndex) in question.options"
-                      :key="optionIndex"
-                      class="flex items-center space-x-3"
-                    >
-                      <div
-                        class="w-4 h-4 border-2 border-gray-300 rounded-full"
-                      ></div>
-                      <input
-                        v-model="question.options[optionIndex]"
-                        type="text"
-                        placeholder="Option text"
-                        class="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
-                      />
-                      <button
-                        @click="question.options.splice(optionIndex, 1)"
-                        class="p-2 text-gray-400 hover:text-red-600 transition-colors"
-                      >
-                        <X class="w-4 h-4" />
-                      </button>
-                    </div>
-                    <button
-                      @click="question.options.push('')"
-                      class="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors flex items-center space-x-2"
-                    >
-                      <Plus class="w-4 h-4" />
-                      <span>Add option</span>
-                    </button>
-                  </div>
-
-                  <div
-                    class="flex items-center space-x-4 pt-4 border-t border-gray-100"
-                  >
-                    <label class="flex items-center space-x-2">
-                      <input
-                        v-model="question.required"
-                        type="checkbox"
-                        class="rounded border-gray-300 text-black focus:ring-black"
-                      />
-                      <span class="text-sm text-gray-700">Required</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-else-if="currentView === 'responses'">
-        <div class="flex justify-between items-center mb-8">
-          <div class="flex items-center space-x-4">
-            <button
-              @click="currentView = 'dashboard'"
-              class="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
-            >
-              <ArrowLeft class="w-5 h-5" />
-            </button>
-            <div>
-              <h1 class="text-2xl font-bold text-gray-900">Form Responses</h1>
-              <p class="text-gray-600">
-                {{ selectedForm?.title || "Form Analytics" }}
-              </p>
-            </div>
-          </div>
-          <div class="flex space-x-3">
-            <button
-              @click="exportResponses"
-              class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center space-x-2"
-            >
-              <Download class="w-4 h-4" />
-              <span>Export CSV</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="grid md:grid-cols-4 gap-6 mb-8">
-          <div class="bg-white rounded-2xl p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-600">Total Responses</p>
-                <p class="text-2xl font-bold text-gray-900">
-                  {{ responses.length }}
-                </p>
-              </div>
-              <div
-                class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center"
-              >
-                <BarChart3 class="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-600">This Week</p>
-                <p class="text-2xl font-bold text-gray-900">
-                  {{ weeklyResponses }}
-                </p>
-              </div>
-              <div
-                class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center"
-              >
-                <TrendingUp class="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-600">Completion Rate</p>
-                <p class="text-2xl font-bold text-gray-900">
-                  {{ completionRate }}%
-                </p>
-              </div>
-              <div
-                class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center"
-              >
-                <Target class="w-6 h-6 text-purple-600" />
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-600">Avg. Time</p>
-                <p class="text-2xl font-bold text-gray-900">
-                  {{ averageTime }}s
-                </p>
-              </div>
-              <div
-                class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center"
-              >
-                <Clock class="w-6 h-6 text-orange-600" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="bg-white rounded-2xl border border-gray-100 overflow-hidden"
-        >
-          <div class="p-6 border-b border-gray-100">
-            <h3 class="text-lg font-semibold text-gray-900">
-              Recent Responses
-            </h3>
-          </div>
-
-          <div v-if="loading" class="p-8 text-center">
-            <div
-              class="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full mx-auto mb-4"
-            ></div>
-            <p class="text-gray-600">Loading responses...</p>
-          </div>
-
-          <div v-else-if="responses.length === 0" class="p-8 text-center">
-            <div
-              class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4"
-            >
-              <BarChart3 class="w-6 h-6 text-gray-400" />
-            </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">
-              No responses yet
-            </h3>
-            <p class="text-gray-600">
-              Share your form to start collecting responses.
-            </p>
-          </div>
-
-          <div v-else class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Submitted
-                  </th>
-                  <th
-                    v-for="question in selectedForm?.questions || []"
-                    :key="question.id"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    {{ question.question.substring(0, 30)
-                    }}{{ question.question.length > 30 ? "..." : "" }}
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr
-                  v-for="response in responses.slice(0, 50)"
-                  :key="response.id"
-                  class="hover:bg-gray-50"
-                >
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ formatDate(response.submittedAt) }}
-                  </td>
-                  <td
-                    v-for="answer in response.responses"
-                    :key="answer.questionId"
-                    class="px-6 py-4 text-sm text-gray-900"
-                  >
-                    <div class="max-w-xs truncate" :title="answer.answer">
-                      {{ answer.answer || "-" }}
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div v-else-if="currentView === 'preview'">
-        <div class="flex justify-between items-center mb-8">
-          <button
-            @click="currentView = previousView"
-            class="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft class="w-5 h-5" />
-            <span>Back</span>
-          </button>
-          <button
-            @click="shareCurrentForm"
-            class="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
-          >
-            <Share2 class="w-4 h-4" />
-            <span>Share</span>
-          </button>
-        </div>
-
-        <div class="max-w-2xl mx-auto">
-          <div
-            class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden"
-          >
-            <div class="h-1 bg-gray-100">
-              <div
-                class="h-full bg-black transition-all duration-500"
-                :style="{
-                  width: `${((currentQuestionIndex + 1) / Math.max(currentForm.questions.length, 1)) * 100}%`,
-                }"
-              ></div>
-            </div>
-
-            <div class="p-8 text-center border-b border-gray-100">
-              <h1 class="text-2xl font-bold text-gray-900 mb-2">
-                {{ currentForm.title || "Untitled Form" }}
-              </h1>
-              <p v-if="currentForm.description" class="text-gray-600">
-                {{ currentForm.description }}
-              </p>
-            </div>
-
-            <div class="p-8 min-h-[400px] flex flex-col justify-center">
-              <div
-                v-if="currentQuestionIndex < currentForm.questions.length"
-                class="space-y-8"
-              >
-                <div class="text-center">
-                  <span class="text-sm text-gray-500 font-medium">
-                    {{ currentQuestionIndex + 1 }} of
-                    {{ currentForm.questions.length }}
-                  </span>
-                </div>
-
-                <h2
-                  class="text-2xl font-semibold text-gray-900 text-center leading-relaxed"
-                >
-                  {{ currentForm.questions[currentQuestionIndex].question }}
-                  <span
-                    v-if="currentForm.questions[currentQuestionIndex].required"
-                    class="text-red-500"
-                    >*</span
-                  >
-                </h2>
-
-                <div
-                  v-if="
-                    ['text', 'email'].includes(
-                      currentForm.questions[currentQuestionIndex].type,
-                    )
-                  "
-                >
-                  <input
-                    v-model="formResponses[currentQuestionIndex]"
-                    :type="currentForm.questions[currentQuestionIndex].type"
-                    placeholder="Type your answer..."
-                    class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-black focus:ring-0 transition-all text-center text-lg"
-                  />
-                </div>
-
-                <div
-                  v-else-if="
-                    currentForm.questions[currentQuestionIndex].type ===
-                    'multiple'
-                  "
-                  class="space-y-3"
-                >
-                  <button
-                    v-for="(option, optionIndex) in currentForm.questions[
-                      currentQuestionIndex
-                    ].options"
-                    :key="optionIndex"
-                    @click="formResponses[currentQuestionIndex] = option"
-                    :class="[
-                      'w-full p-4 text-left border-2 rounded-2xl transition-all font-medium',
-                      formResponses[currentQuestionIndex] === option
-                        ? 'border-black bg-gray-50 text-gray-900'
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700',
-                    ]"
-                  >
-                    {{ option }}
-                  </button>
-                </div>
-
-                <div
-                  v-else-if="
-                    currentForm.questions[currentQuestionIndex].type ===
-                    'rating'
-                  "
-                >
-                  <div class="flex justify-center space-x-2">
-                    <button
-                      v-for="rating in 5"
-                      :key="rating"
-                      @click="formResponses[currentQuestionIndex] = rating"
-                      :class="[
-                        'p-3 transition-colors rounded-xl',
-                        formResponses[currentQuestionIndex] >= rating
-                          ? 'text-yellow-400'
-                          : 'text-gray-300 hover:text-yellow-300',
-                      ]"
-                    >
-                      <Star class="w-8 h-8 fill-current" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div v-else class="text-center space-y-6">
-                <div
-                  class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto"
-                >
-                  <Check class="w-8 h-8 text-green-600" />
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900">Thank you!</h2>
-                <p class="text-gray-600">Your response has been recorded.</p>
-              </div>
-            </div>
-
-            <div
-              v-if="currentQuestionIndex < currentForm.questions.length"
-              class="p-6 bg-gray-50 flex justify-between items-center"
-            >
-              <button
-                v-if="currentQuestionIndex > 0"
-                @click="previousQuestion"
-                class="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors px-4 py-2 rounded-lg hover:bg-white"
-              >
-                <ChevronLeft class="w-4 h-4" />
-                <span>Previous</span>
-              </button>
-              <div v-else></div>
-
-              <button
-                @click="nextQuestion"
-                :disabled="
-                  isCurrentQuestionRequired &&
-                  !formResponses[currentQuestionIndex]
-                "
-                :class="[
-                  'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
-                  isCurrentQuestionRequired &&
-                  !formResponses[currentQuestionIndex]
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-black text-white hover:bg-gray-800',
-                ]"
-              >
-                <span>{{
-                  currentQuestionIndex === currentForm.questions.length - 1
-                    ? "Submit"
-                    : "Next"
-                }}</span>
-                <ChevronRight class="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </main>
 
     <div
@@ -1165,7 +494,10 @@
           <p class="font-semibold">Error</p>
           <p class="text-sm">{{ globalAlert.message }}</p>
         </div>
-        <button @click="globalAlert.message = ''" class="ml-4 text-red-400 hover:text-red-700">
+        <button
+          @click="globalAlert.message = ''"
+          class="ml-4 text-red-400 hover:text-red-700"
+        >
           <X class="w-5 h-5" />
         </button>
       </div>
@@ -1178,7 +510,10 @@
           <p class="font-semibold">Success</p>
           <p class="text-sm">{{ globalAlert.message }}</p>
         </div>
-        <button @click="globalAlert.message = ''" class="ml-4 text-green-400 hover:text-green-700">
+        <button
+          @click="globalAlert.message = ''"
+          class="ml-4 text-green-400 hover:text-green-700"
+        >
           <X class="w-5 h-5" />
         </button>
       </div>
@@ -1191,7 +526,10 @@
           <p class="font-semibold">Info</p>
           <p class="text-sm">{{ globalAlert.message }}</p>
         </div>
-        <button @click="globalAlert.message = ''" class="ml-4 text-blue-400 hover:text-blue-700">
+        <button
+          @click="globalAlert.message = ''"
+          class="ml-4 text-blue-400 hover:text-blue-700"
+        >
           <X class="w-5 h-5" />
         </button>
       </div>
@@ -1200,6 +538,7 @@
 </template>
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import {
   ArrowLeft,
   BarChart3,
@@ -1304,8 +643,8 @@ const publicForm = ref(null);
 const publicFormResponses = ref({});
 
 const globalAlert = reactive({
-  message: '',
-  type: 'info', // 'info', 'error', 'success'
+  message: "",
+  type: "info", // 'info', 'error', 'success'
 });
 
 const weeklyResponses = computed(() => {
@@ -1313,7 +652,7 @@ const weeklyResponses = computed(() => {
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
   return responses.value.filter((r) => {
     let date = r.submittedAt;
-    if (date && typeof date.toDate === 'function') {
+    if (date && typeof date.toDate === "function") {
       date = date.toDate();
     }
     return date > oneWeekAgo;
@@ -1367,29 +706,29 @@ const checkForPublicForm = async () => {
   }
 };
 
-const showAlert = (message, type = 'info', timeout = 5000) => {
+const showAlert = (message, type = "info", timeout = 5000) => {
   globalAlert.message = message;
   globalAlert.type = type;
   if (timeout > 0) {
     setTimeout(() => {
-      if (globalAlert.message === message) globalAlert.message = '';
+      if (globalAlert.message === message) globalAlert.message = "";
     }, timeout);
   }
 };
 
 const handleAuth = async () => {
   if (!authForm.email || !authForm.password) {
-    showAlert('Please fill in all fields', 'error');
+    showAlert("Please fill in all fields", "error");
     return;
   }
 
   if (authForm.password.length < 6) {
-    showAlert('Password must be at least 6 characters', 'error');
+    showAlert("Password must be at least 6 characters", "error");
     return;
   }
 
   authLoading.value = true;
-  authError.value = '';
+  authError.value = "";
 
   try {
     if (authMode.value === "signup") {
@@ -1399,7 +738,7 @@ const handleAuth = async () => {
         authForm.password,
       );
       user.value = userCredential.user;
-      showAlert('Account created successfully!', 'success');
+      showAlert("Account created successfully!", "success");
     } else {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -1407,18 +746,19 @@ const handleAuth = async () => {
         authForm.password,
       );
       user.value = userCredential.user;
-      showAlert('Signed in successfully!', 'success');
+      showAlert("Signed in successfully!", "success");
     }
 
     showAuthModal.value = false;
-    authForm.email = '';
-    authForm.password = '';
+    authForm.email = "";
+    authForm.password = "";
     await loadForms();
   } catch (error) {
-    let msg = '';
+    let msg = "";
     switch (error.code) {
       case "auth/email-already-in-use":
-        msg = "An account with this email already exists. Try signing in instead.";
+        msg =
+          "An account with this email already exists. Try signing in instead.";
         break;
       case "auth/weak-password":
         msg = "Password is too weak. Please choose a stronger password.";
@@ -1444,7 +784,7 @@ const handleAuth = async () => {
       default:
         msg = error.message || "Authentication failed. Please try again.";
     }
-    showAlert(msg, 'error');
+    showAlert(msg, "error");
   } finally {
     authLoading.value = false;
   }
@@ -1459,9 +799,9 @@ const signOut = async () => {
     currentView.value = "dashboard";
     isPublicForm.value = false;
     publicForm.value = null;
-    showAlert('Signed out successfully!', 'success');
+    showAlert("Signed out successfully!", "success");
   } catch (error) {
-    showAlert('Error signing out. Please try again.', 'error');
+    showAlert("Error signing out. Please try again.", "error");
   }
 };
 
@@ -1499,8 +839,10 @@ const loadForms = async () => {
       const data = doc.data();
       let createdAt = data.createdAt;
       let updatedAt = data.updatedAt;
-      if (createdAt && typeof createdAt.toDate === 'function') createdAt = createdAt.toDate();
-      if (updatedAt && typeof updatedAt.toDate === 'function') updatedAt = updatedAt.toDate();
+      if (createdAt && typeof createdAt.toDate === "function")
+        createdAt = createdAt.toDate();
+      if (updatedAt && typeof updatedAt.toDate === "function")
+        updatedAt = updatedAt.toDate();
       return {
         id: doc.id,
         ...data,
@@ -1547,8 +889,10 @@ const loadPublicForm = async (formId) => {
       const formData = docSnap.data();
       let createdAt = formData.createdAt;
       let updatedAt = formData.updatedAt;
-      if (createdAt && typeof createdAt.toDate === 'function') createdAt = createdAt.toDate();
-      if (updatedAt && typeof updatedAt.toDate === 'function') updatedAt = updatedAt.toDate();
+      if (createdAt && typeof createdAt.toDate === "function")
+        createdAt = createdAt.toDate();
+      if (updatedAt && typeof updatedAt.toDate === "function")
+        updatedAt = updatedAt.toDate();
       publicForm.value = {
         id: docSnap.id,
         ...formData,
@@ -1622,17 +966,17 @@ const removeQuestion = (index) => {
 
 const saveForm = async () => {
   if (!currentForm.title.trim()) {
-    showAlert('Please enter a form title', 'error');
+    showAlert("Please enter a form title", "error");
     return;
   }
 
   if (currentForm.questions.length === 0) {
-    showAlert('Please add at least one question', 'error');
+    showAlert("Please add at least one question", "error");
     return;
   }
 
   if (!user.value) {
-    showAlert('You must be logged in to save forms', 'error');
+    showAlert("You must be logged in to save forms", "error");
     return;
   }
 
@@ -1662,14 +1006,18 @@ const saveForm = async () => {
       currentForm.id = docRef.id;
     }
 
-    showAlert('Form saved successfully!', 'success');
+    showAlert("Form saved successfully!", "success");
     currentView.value = "dashboard";
     resetCurrentForm();
   } catch (error) {
     if (error.code === "permission-denied") {
-      showAlert('Permission denied. Please check your Firestore security rules and ensure you are properly authenticated.', 'error', 8000);
+      showAlert(
+        "Permission denied. Please check your Firestore security rules and ensure you are properly authenticated.",
+        "error",
+        8000,
+      );
     } else {
-      showAlert(`Error saving form: ${error.message}`, 'error', 8000);
+      showAlert(`Error saving form: ${error.message}`, "error", 8000);
     }
   } finally {
     saving.value = false;
@@ -1687,9 +1035,9 @@ const deleteForm = async (formId) => {
   try {
     await deleteDoc(doc(db, "forms", formId));
     forms.value = forms.value.filter((f) => f.id !== formId);
-    showAlert('Form deleted.', 'success');
+    showAlert("Form deleted.", "success");
   } catch (error) {
-    showAlert('Error deleting form. Please try again.', 'error');
+    showAlert("Error deleting form. Please try again.", "error");
   }
 };
 
@@ -1738,7 +1086,7 @@ const shareCurrentForm = () => {
 const copyShareUrl = async () => {
   try {
     await navigator.clipboard.writeText(shareUrl.value);
-    showAlert('Link copied to clipboard!', 'success');
+    showAlert("Link copied to clipboard!", "success");
   } catch (err) {
     const textArea = document.createElement("textarea");
     textArea.value = shareUrl.value;
@@ -1746,13 +1094,13 @@ const copyShareUrl = async () => {
     textArea.select();
     document.execCommand("copy");
     document.body.removeChild(textArea);
-    showAlert('Link copied!', 'success');
+    showAlert("Link copied!", "success");
   }
 };
 
 const exportResponses = () => {
   if (responses.value.length === 0) {
-    showAlert('No responses to export', 'error');
+    showAlert("No responses to export", "error");
     return;
   }
 
@@ -1780,7 +1128,7 @@ const exportResponses = () => {
   a.click();
   document.body.removeChild(a);
   window.URL.revokeObjectURL(url);
-  showAlert('Responses exported as CSV.', 'success');
+  showAlert("Responses exported as CSV.", "success");
 };
 
 const formatDate = (date) => {
@@ -1846,7 +1194,7 @@ const submitPublicForm = async () => {
 
     currentQuestionIndex.value++;
   } catch (error) {
-    showAlert('Error submitting form. Please try again.', 'error');
+    showAlert("Error submitting form. Please try again.", "error");
   } finally {
     submitting.value = false;
   }
@@ -1863,6 +1211,20 @@ const resetCurrentForm = () => {
     responseCount: 0,
   });
 };
+
+const router = useRouter();
+
+watch(user, (val) => {
+  if (val) {
+    router.replace("/dashboard");
+  }
+});
+
+onMounted(() => {
+  if (user.value) {
+    router.replace("/dashboard");
+  }
+});
 
 onMounted(async () => {
   await checkForPublicForm();
@@ -1904,4 +1266,3 @@ onMounted(async () => {
   }
 }
 </style>
-
