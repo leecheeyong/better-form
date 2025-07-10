@@ -62,7 +62,7 @@
     </nav>
 
     <div
-      v-if="showAuthModal"
+      v-if="showAuthModal && !isPublicForm"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
     >
       <div class="bg-white rounded-2xl p-8 max-w-md w-full">
@@ -144,228 +144,227 @@
     </div>
 
     <main class="max-w-6xl mx-auto px-6 py-8">
-      <div v-if="isPublicForm && publicForm">
-        <div class="max-w-2xl mx-auto">
-          <div
-            class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden"
-          >
-            <div class="h-1 bg-gray-100">
-              <div
-                class="h-full bg-black transition-all duration-500"
-                :style="{
-                  width: `${((currentQuestionIndex + 1) / Math.max(publicForm.questions.length, 1)) * 100}%`,
-                }"
-              ></div>
-            </div>
+      <div v-if="isPublicForm">
+        <div v-if="publicForm">
+          <div class="max-w-2xl mx-auto">
+            <div
+              class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden"
+            >
+              <div class="h-1 bg-gray-100">
+                <div
+                  class="h-full bg-black transition-all duration-500"
+                  :style="{
+                    width: `${((currentQuestionIndex + 1) / Math.max(publicForm.questions.length, 1)) * 100}%`,
+                  }"
+                ></div>
+              </div>
 
-            <div class="p-8 text-center border-b border-gray-100">
-              <h1 class="text-2xl font-bold text-gray-900 mb-2">
-                {{ publicForm.title }}
-              </h1>
-              <p v-if="publicForm.description" class="text-gray-600">
-                {{ publicForm.description }}
-              </p>
-            </div>
+              <div class="p-8 text-center border-b border-gray-100">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                  {{ publicForm.title }}
+                </h1>
+                <p v-if="publicForm.description" class="text-gray-600">
+                  {{ publicForm.description }}
+                </p>
+              </div>
 
-            <div class="p-8 min-h-[400px] flex flex-col justify-center">
-              <div
-                v-if="currentQuestionIndex < publicForm.questions.length"
-                class="space-y-8"
-              >
-                <div class="text-center">
-                  <span class="text-sm text-gray-500 font-medium">
-                    {{ currentQuestionIndex + 1 }} of
-                    {{ publicForm.questions.length }}
-                  </span>
-                </div>
-
-                <h2
-                  class="text-2xl font-semibold text-gray-900 text-center leading-relaxed"
+              <div class="p-8 min-h-[400px] flex flex-col justify-center">
+                <div
+                  v-if="currentQuestionIndex < publicForm.questions.length"
+                  class="space-y-8"
                 >
-                  {{ publicForm.questions[currentQuestionIndex].question }}
-                  <span
-                    v-if="publicForm.questions[currentQuestionIndex].required"
-                    class="text-red-500"
-                    >*</span
+                  <div class="text-center">
+                    <span class="text-sm text-gray-500 font-medium">
+                      {{ currentQuestionIndex + 1 }} of
+                      {{ publicForm.questions.length }}
+                    </span>
+                  </div>
+
+                  <h2
+                    class="text-2xl font-semibold text-gray-900 text-center leading-relaxed"
                   >
-                </h2>
+                    {{ publicForm.questions[currentQuestionIndex].question }}
+                    <span
+                      v-if="publicForm.questions[currentQuestionIndex].required"
+                      class="text-red-500"
+                      >*</span
+                    >
+                  </h2>
 
-                <div
-                  v-if="
-                    ['text', 'email'].includes(
-                      publicForm.questions[currentQuestionIndex].type,
-                    )
-                  "
-                >
-                  <input
-                    v-model="publicFormResponses[currentQuestionIndex]"
-                    :type="publicForm.questions[currentQuestionIndex].type"
-                    placeholder="Type your answer..."
-                    class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-black focus:ring-0 transition-all text-center text-lg"
-                    @keyup.enter="nextPublicQuestion"
-                  />
-                </div>
-
-                <div
-                  v-else-if="
-                    publicForm.questions[currentQuestionIndex].type ===
-                    'multiple'
-                  "
-                  class="space-y-3"
-                >
-                  <button
-                    v-for="(option, optionIndex) in publicForm.questions[
-                      currentQuestionIndex
-                    ].options"
-                    :key="optionIndex"
-                    @click="
-                      publicFormResponses[currentQuestionIndex] = option;
-                      nextPublicQuestion();
+                  <div
+                    v-if="
+                      ['text', 'email'].includes(
+                        publicForm.questions[currentQuestionIndex].type,
+                      )
                     "
-                    :class="[
-                      'w-full p-4 text-left border-2 rounded-2xl transition-all font-medium',
-                      publicFormResponses[currentQuestionIndex] === option
-                        ? 'border-black bg-gray-50 text-gray-900'
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700',
-                    ]"
                   >
-                    {{ option }}
-                  </button>
-                </div>
+                    <input
+                      v-model="publicFormResponses[currentQuestionIndex]"
+                      :type="publicForm.questions[currentQuestionIndex].type"
+                      placeholder="Type your answer..."
+                      class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-black focus:ring-0 transition-all text-center text-lg"
+                      @keyup.enter="nextPublicQuestion"
+                    />
+                  </div>
 
-                <div
-                  v-else-if="
-                    publicForm.questions[currentQuestionIndex].type === 'rating'
-                  "
-                >
-                  <div class="flex justify-center space-x-2">
+                  <div
+                    v-else-if="
+                      publicForm.questions[currentQuestionIndex].type ===
+                      'multiple'
+                    "
+                    class="space-y-3"
+                  >
                     <button
-                      v-for="rating in 5"
-                      :key="rating"
+                      v-for="(option, optionIndex) in publicForm.questions[
+                        currentQuestionIndex
+                      ].options"
+                      :key="optionIndex"
                       @click="
-                        publicFormResponses[currentQuestionIndex] = rating;
+                        publicFormResponses[currentQuestionIndex] = option;
                         nextPublicQuestion();
                       "
                       :class="[
-                        'p-3 transition-colors rounded-xl',
-                        publicFormResponses[currentQuestionIndex] >= rating
-                          ? 'text-yellow-400'
-                          : 'text-gray-300 hover:text-yellow-300',
+                        'w-full p-4 text-left border-2 rounded-2xl transition-all font-medium',
+                        publicFormResponses[currentQuestionIndex] === option
+                          ? 'border-black bg-gray-50 text-gray-900'
+                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700',
                       ]"
                     >
-                      <Star class="w-8 h-8 fill-current" />
+                      {{ option }}
                     </button>
                   </div>
+
+                  <div
+                    v-else-if="
+                      publicForm.questions[currentQuestionIndex].type === 'rating'
+                    "
+                  >
+                    <div class="flex justify-center space-x-2">
+                      <button
+                        v-for="rating in 5"
+                        :key="rating"
+                        @click="
+                          publicFormResponses[currentQuestionIndex] = rating;
+                          nextPublicQuestion();
+                        "
+                        :class="[
+                          'p-3 transition-colors rounded-xl',
+                          publicFormResponses[currentQuestionIndex] >= rating
+                            ? 'text-yellow-400'
+                            : 'text-gray-300 hover:text-yellow-300',
+                        ]"
+                      >
+                        <Star class="w-8 h-8 fill-current" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="text-center space-y-6">
+                  <div
+                    class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto"
+                  >
+                    <Check class="w-8 h-8 text-green-600" />
+                  </div>
+                  <h2 class="text-2xl font-bold text-gray-900">Thank you!</h2>
+                  <p class="text-gray-600">
+                    Your response has been recorded successfully.
+                  </p>
+                  <button
+                    @click="goHome"
+                    class="bg-black text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    Create Your Own Form
+                  </button>
                 </div>
               </div>
 
-              <div v-else class="text-center space-y-6">
-                <div
-                  class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto"
-                >
-                  <Check class="w-8 h-8 text-green-600" />
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900">Thank you!</h2>
-                <p class="text-gray-600">
-                  Your response has been recorded successfully.
-                </p>
+              <div
+                v-if="currentQuestionIndex < publicForm.questions.length"
+                class="p-6 bg-gray-50 flex justify-between items-center"
+              >
                 <button
-                  @click="goHome"
-                  class="bg-black text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors"
+                  v-if="currentQuestionIndex > 0"
+                  @click="previousPublicQuestion"
+                  class="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors px-4 py-2 rounded-lg hover:bg-white"
                 >
-                  Create Your Own Form
+                  <ChevronLeft class="w-4 h-4" />
+                  <span>Previous</span>
+                </button>
+                <div v-else></div>
+
+                <button
+                  v-if="currentQuestionIndex < publicForm.questions.length - 1"
+                  @click="nextPublicQuestion"
+                  :disabled="
+                    submitting ||
+                    (isPublicQuestionRequired &&
+                      !publicFormResponses[currentQuestionIndex])
+                  "
+                  :class="[
+                    'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
+                    submitting ||
+                    (isPublicQuestionRequired &&
+                      !publicFormResponses[currentQuestionIndex])
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-black text-white hover:bg-gray-800',
+                  ]"
+                >
+                  <span>Next</span>
+                  <ChevronRight class="w-4 h-4" />
+                </button>
+                <button
+                  v-else
+                  @click="submitPublicForm"
+                  :disabled="
+                    submitting ||
+                    (isPublicQuestionRequired &&
+                      !publicFormResponses[currentQuestionIndex])
+                  "
+                  :class="[
+                    'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
+                    submitting ||
+                    (isPublicQuestionRequired &&
+                      !publicFormResponses[currentQuestionIndex])
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-black text-white hover:bg-gray-800',
+                  ]"
+                >
+                  <span>Submit</span>
+                  <ChevronRight class="w-4 h-4" />
                 </button>
               </div>
             </div>
-
+          </div>
+        </div>
+        <div v-else-if="!publicForm && !loading">
+          <div class="text-center py-20">
             <div
-              v-if="currentQuestionIndex < publicForm.questions.length"
-              class="p-6 bg-gray-50 flex justify-between items-center"
+              class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6"
             >
-              <button
-                v-if="currentQuestionIndex > 0"
-                @click="previousPublicQuestion"
-                class="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors px-4 py-2 rounded-lg hover:bg-white"
-              >
-                <ChevronLeft class="w-4 h-4" />
-                <span>Previous</span>
-              </button>
-              <div v-else></div>
-
-              <button
-                v-if="currentQuestionIndex < publicForm.questions.length - 1"
-                @click="nextPublicQuestion"
-                :disabled="
-                  submitting ||
-                  (isPublicQuestionRequired &&
-                    !publicFormResponses[currentQuestionIndex])
-                "
-                :class="[
-                  'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
-                  submitting ||
-                  (isPublicQuestionRequired &&
-                    !publicFormResponses[currentQuestionIndex])
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-black text-white hover:bg-gray-800',
-                ]"
-              >
-                <span>Next</span>
-                <ChevronRight class="w-4 h-4" />
-              </button>
-              <button
-                v-else
-                @click="submitPublicForm"
-                :disabled="
-                  submitting ||
-                  (isPublicQuestionRequired &&
-                    !publicFormResponses[currentQuestionIndex])
-                "
-                :class="[
-                  'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
-                  submitting ||
-                  (isPublicQuestionRequired &&
-                    !publicFormResponses[currentQuestionIndex])
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-black text-white hover:bg-gray-800',
-                ]"
-              >
-                <span>Submit</span>
-                <ChevronRight class="w-4 h-4" />
-              </button>
+              <X class="w-8 h-8 text-red-600" />
             </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-3">Form Not Found</h2>
+            <p class="text-gray-600 mb-8">
+              The form you're looking for doesn't exist or has been deleted.
+            </p>
+            <button
+              @click="goHome"
+              class="bg-black text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors"
+            >
+              Go Home
+            </button>
+          </div>
+        </div>
+        <div v-else>
+          <div class="text-center py-20">
+            <div
+              class="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full mx-auto mb-4"
+            ></div>
+            <p class="text-gray-600">Loading form...</p>
           </div>
         </div>
       </div>
-
-      <div v-else-if="isPublicForm && !publicForm && !loading">
-        <div class="text-center py-20">
-          <div
-            class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6"
-          >
-            <X class="w-8 h-8 text-red-600" />
-          </div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-3">Form Not Found</h2>
-          <p class="text-gray-600 mb-8">
-            The form you're looking for doesn't exist or has been deleted.
-          </p>
-          <button
-            @click="goHome"
-            class="bg-black text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors"
-          >
-            Go Home
-          </button>
-        </div>
-      </div>
-
-      <div v-else-if="isPublicForm && loading">
-        <div class="text-center py-20">
-          <div
-            class="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full mx-auto mb-4"
-          ></div>
-          <p class="text-gray-600">Loading form...</p>
-        </div>
-      </div>
-
       <div v-else-if="!user" class="text-center py-20">
         <h1 class="text-5xl font-bold text-gray-900 mb-6 leading-tight">
           Forms that people<br />
@@ -1214,14 +1213,14 @@ const resetCurrentForm = () => {
 
 const router = useRouter();
 
-watch(user, (val) => {
-  if (val) {
+watch([user, isPublicForm], ([val, isPublic]) => {
+  if (val && !isPublic) {
     router.replace("/dashboard");
   }
 });
 
 onMounted(() => {
-  if (user.value) {
+  if (user.value && !isPublicForm.value) {
     router.replace("/dashboard");
   }
 });

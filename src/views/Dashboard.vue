@@ -942,6 +942,50 @@
     </main>
 
     <div
+      v-if="showShareModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    >
+      <div class="bg-white rounded-2xl p-8 max-w-md w-full">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-semibold text-gray-900">Share Form</h3>
+          <button
+            @click="showShareModal = false"
+            class="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X class="w-5 h-5" />
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Public Form Link</label>
+            <div class="flex space-x-2">
+              <input
+                :value="shareUrl"
+                readonly
+                class="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-600 text-sm"
+              />
+              <button
+                @click="copyShareUrl"
+                class="bg-black text-white px-4 py-3 rounded-xl hover:bg-gray-800 transition-colors"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs text-gray-600 mb-1">
+              Form ID:
+              <span class="font-mono">{{ selectedFormForShare?.id }}</span>
+            </p>
+            <p class="text-xs text-gray-500">
+              Anyone with this link can fill out your form. All responses are stored in Firebase.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
       v-if="globalAlert.message"
       class="fixed inset-x-0 bottom-4 z-50 mx-auto max-w-md w-full"
     >
@@ -1533,20 +1577,10 @@ const shareForm = (form) => {
   showShareModal.value = true;
 };
 
-const shareCurrentForm = () => {
-  if (!currentForm.id) {
-    alert("Please save the form first to get a shareable link");
-    return;
-  }
-  selectedFormForShare.value = currentForm;
-  shareUrl.value = `${window.location.origin}?form=${currentForm.id}`;
-  showShareModal.value = true;
-};
-
 const copyShareUrl = async () => {
   try {
     await navigator.clipboard.writeText(shareUrl.value);
-    showAlert("Link copied to clipboard!", "success");
+    showAlert('Link copied to clipboard!', 'success');
   } catch (err) {
     const textArea = document.createElement("textarea");
     textArea.value = shareUrl.value;
@@ -1554,7 +1588,7 @@ const copyShareUrl = async () => {
     textArea.select();
     document.execCommand("copy");
     document.body.removeChild(textArea);
-    showAlert("Link copied!", "success");
+    showAlert('Link copied!', 'success');
   }
 };
 
