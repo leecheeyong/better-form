@@ -1186,10 +1186,13 @@ const submitPublicForm = async () => {
     };
 
     await addDoc(collection(db, "responses"), responseData);
-    await updateDoc(doc(db, "forms", publicForm.value.id), {
-      responseCount: increment(1),
-      lastResponseAt: new Date(),
-    });
+    // Only update form stats if user is authenticated
+    if (user.value) {
+      await updateDoc(doc(db, "forms", publicForm.value.id), {
+        responseCount: increment(1),
+        lastResponseAt: new Date(),
+      });
+    }
 
     currentQuestionIndex.value++;
   } catch (error) {
