@@ -1,7 +1,7 @@
 <template>
-  <div id="app" class="min-h-screen bg-gray-50">
+  <div id="app" class="min-h-screen flex flex-col bg-gray-50">
     <nav class="bg-white border-b border-gray-100 sticky top-0 z-40">
-      <div class="max-w-6xl mx-auto px-6">
+      <div class="max-w-6xl mx-auto px-2 sm:px-4 md:px-6">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center space-x-3">
             <div
@@ -9,12 +9,11 @@
             >
               <span class="text-white font-bold text-sm">B</span>
             </div>
-            <button
-              @click="goHome"
+            <h1
               class="text-xl font-semibold text-gray-900 hover:text-gray-700 transition-colors"
             >
               Better Form
-            </button>
+          </h1>
           </div>
           <div v-if="user" class="flex items-center space-x-4">
             <div
@@ -36,7 +35,7 @@
       </div>
     </nav>
 
-    <main v-if="user || isPublicForm" class="max-w-6xl mx-auto px-6 py-8">
+    <main v-if="user || isPublicForm" class="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 py-6 md:py-8 flex-1 w-full">
       <div v-if="isPublicForm && publicForm">
         <div class="max-w-2xl mx-auto">
           <div
@@ -305,7 +304,7 @@
           </button>
         </div>
 
-        <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div
             v-for="form in forms"
             :key="form.id"
@@ -316,7 +315,7 @@
                 {{ form.title || "Untitled Form" }}
               </h3>
               <div
-                class="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                class="flex space-x-1 transition-opacity md:opacity-0 md:group-hover:opacity-100 opacity-100"
               >
                 <button
                   @click="editForm(form)"
@@ -352,9 +351,6 @@
             <div class="flex justify-between items-center text-sm mb-4">
               <span class="text-gray-500"
                 >{{ form.questions?.length || 0 }} questions</span
-              >
-              <span class="text-green-600 font-medium"
-                >{{ form.responseCount || 0 }} responses</span
               >
             </div>
 
@@ -411,12 +407,12 @@
           </div>
         </div>
 
-        <div class="grid lg:grid-cols-4 gap-8">
-          <div class="lg:col-span-1">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-8">
+          <div class="lg:col-span-1 mb-6 lg:mb-0">
             <div
-              class="bg-white rounded-2xl p-6 border border-gray-100 sticky top-24"
+              class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 lg:sticky lg:top-24"
             >
-              <h3 class="font-semibold mb-6 text-gray-900">Form Settings</h3>
+              <h3 class="font-semibold mb-4 sm:mb-6 text-gray-900 text-base sm:text-lg">Form Settings</h3>
 
               <div class="space-y-6">
                 <div>
@@ -485,17 +481,17 @@
           <div class="lg:col-span-3">
             <div
               v-if="currentForm.questions.length === 0"
-              class="text-center py-20 bg-white rounded-2xl border border-gray-100"
+              class="text-center py-12 sm:py-20 bg-white rounded-2xl border border-gray-100"
             >
               <div
-                class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4"
               >
                 <HelpCircle class="w-6 h-6 text-gray-400" />
               </div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">
+              <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                 Add your first question
               </h3>
-              <p class="text-gray-600">
+              <p class="text-gray-600 text-sm sm:text-base">
                 Choose a question type from the sidebar to get started.
               </p>
             </div>
@@ -504,9 +500,9 @@
               <div
                 v-for="(question, index) in currentForm.questions"
                 :key="question.id"
-                class="bg-white rounded-2xl p-6 border border-gray-100"
+                class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100"
               >
-                <div class="flex justify-between items-start mb-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-0">
                   <div class="flex items-center space-x-3">
                     <div
                       class="w-8 h-8 bg-gray-100 text-gray-600 rounded-lg flex items-center justify-center text-sm font-medium"
@@ -531,7 +527,7 @@
                       v-model="question.question"
                       type="text"
                       placeholder="Enter your question"
-                      class="w-full px-0 py-2 text-lg font-medium border-0 border-b-2 border-gray-200 focus:border-black focus:ring-0 transition-colors bg-transparent"
+                      class="w-full px-0 py-2 text-base sm:text-lg font-medium border-0 border-b-2 border-gray-200 focus:border-black focus:ring-0 transition-colors bg-transparent"
                     />
                   </div>
 
@@ -548,7 +544,7 @@
                         v-model="question.options[optionIndex]"
                         type="text"
                         placeholder="Option text"
-                        class="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                        class="flex-1 px-2 sm:px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm sm:text-base"
                       />
                       <button
                         @click="question.options.splice(optionIndex, 1)"
@@ -903,8 +899,7 @@
               <span class="font-mono">{{ selectedFormForShare?.id }}</span>
             </p>
             <p class="text-xs text-gray-500">
-              Anyone with this link can fill out your form. All responses are
-              stored in Firebase.
+              Anyone with this link can fill out your form.
             </p>
           </div>
         </div>
@@ -964,6 +959,9 @@
         </button>
       </div>
     </div>
+      <footer class="w-full text-center b-0 text-xs text-gray-400 p-2 mt-auto">
+      Made with <span class="text-red-500">❤️</span> by <a href="https://github.com/leecheeyong" target="_blank" class="underline decoration-sky-800">Chee Yong Lee</a>, Open source on <a href="https://github.com/leecheeyong/better-form" target="_blank" class="underline decoration-sky-800">Github</a> under the terms of the <a href="https://github.com/leecheeyong/better-form/blob/main/LICENSE" target="_blank" class="underline decoration-sky-800">MIT License.</a>
+    </footer>
   </div>
 </template>
 <script setup>
@@ -1037,15 +1035,6 @@ const generateUniqueId = () => {
 const user = ref(null);
 const loading = ref(false);
 const saving = ref(false);
-const showAuthModal = ref(false);
-const authMode = ref("login");
-const authLoading = ref(false);
-const authError = ref("");
-const showSubmissionSuccess = ref(false);
-const authForm = reactive({
-  email: "",
-  password: "",
-});
 
 const currentView = ref("dashboard");
 const previousView = ref("dashboard");
@@ -1074,36 +1063,7 @@ const publicFormResponses = ref({});
 
 const globalAlert = reactive({
   message: "",
-  type: "info", // 'info', 'error', 'success'
-});
-
-const weeklyResponses = computed(() => {
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-  return responses.value.filter((r) => {
-    let date = r.submittedAt;
-    if (date && typeof date.toDate === "function") {
-      date = date.toDate();
-    }
-    return date > oneWeekAgo;
-  }).length;
-});
-
-const completionRate = computed(() => {
-  if (responses.value.length === 0) return 0;
-  const completed = responses.value.filter(
-    (r) => r.responses && r.responses.length > 0,
-  ).length;
-  return Math.round((completed / responses.value.length) * 100);
-});
-
-const averageTime = computed(() => {
-  if (responses.value.length === 0) return 0;
-  const times = responses.value
-    .filter((r) => r.completionTime)
-    .map((r) => r.completionTime);
-  if (times.length === 0) return 0;
-  return Math.round(times.reduce((a, b) => a + b, 0) / times.length);
+  type: "info", 
 });
 
 const isCurrentQuestionRequired = computed(() => {
@@ -1143,80 +1103,6 @@ const showAlert = (message, type = "info", timeout = 5000) => {
     setTimeout(() => {
       if (globalAlert.message === message) globalAlert.message = "";
     }, timeout);
-  }
-};
-
-const handleAuth = async () => {
-  if (!authForm.email || !authForm.password) {
-    showAlert("Please fill in all fields", "error");
-    return;
-  }
-
-  if (authForm.password.length < 6) {
-    showAlert("Password must be at least 6 characters", "error");
-    return;
-  }
-
-  authLoading.value = true;
-  authError.value = "";
-
-  try {
-    if (authMode.value === "signup") {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        authForm.email,
-        authForm.password,
-      );
-      user.value = userCredential.user;
-      showAlert("Account created successfully!", "success");
-    } else {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        authForm.email,
-        authForm.password,
-      );
-      user.value = userCredential.user;
-      showAlert("Signed in successfully!", "success");
-    }
-
-    showAuthModal.value = false;
-    authForm.email = "";
-    authForm.password = "";
-    await loadForms();
-  } catch (error) {
-    let msg = "";
-    switch (error.code) {
-      case "auth/email-already-in-use":
-        msg =
-          "An account with this email already exists. Try signing in instead.";
-        break;
-      case "auth/weak-password":
-        msg = "Password is too weak. Please choose a stronger password.";
-        break;
-      case "auth/invalid-email":
-        msg = "Please enter a valid email address.";
-        break;
-      case "auth/user-not-found":
-        msg = "No account found with this email. Try signing up instead.";
-        break;
-      case "auth/wrong-password":
-        msg = "Incorrect password. Please try again.";
-        break;
-      case "auth/invalid-credential":
-        msg = "Invalid email or password. Please check your credentials.";
-        break;
-      case "auth/too-many-requests":
-        msg = "Too many failed attempts. Please try again later.";
-        break;
-      case "auth/network-request-failed":
-        msg = "Network error. Please check your internet connection.";
-        break;
-      default:
-        msg = error.message || "Authentication failed. Please try again.";
-    }
-    showAlert(msg, "error");
-  } finally {
-    authLoading.value = false;
   }
 };
 

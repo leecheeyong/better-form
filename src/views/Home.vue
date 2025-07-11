@@ -1,7 +1,7 @@
 <template>
-  <div id="app" class="min-h-screen bg-gray-50">
+  <div id="app" class="min-h-screen flex flex-col bg-gray-50">
     <nav class="bg-white border-b border-gray-100 sticky top-0 z-40">
-      <div class="max-w-6xl mx-auto px-6">
+      <div class="max-w-6xl mx-auto px-2 sm:px-4 md:px-6">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center space-x-3">
             <div
@@ -9,12 +9,11 @@
             >
               <span class="text-white font-bold text-sm">B</span>
             </div>
-            <button
-              @click="goHome"
+            <h1
               class="text-xl font-semibold text-gray-900 hover:text-gray-700 transition-colors"
             >
               Better Form
-            </button>
+          </h1>
           </div>
           <div
             v-if="!user && !isPublicForm"
@@ -64,10 +63,13 @@
       v-if="showAuthModal && !isPublicForm"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
     >
-      <div class="bg-white rounded-2xl p-8 max-w-md w-full">
-        <div class="text-center mb-8">
+      <div class="bg-white rounded-2xl p-4 sm:p-8 max-w-md w-full relative">
+        <div class="text-center mb-6 sm:mb-8">
+          <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center mx-auto mb-4">
+            <span class="text-white font-bold text-sm">B</span>
+          </div>
           <h2 class="text-2xl font-bold text-gray-900 mb-2">
-            {{ authMode === "login" ? "Welcome back" : "Create account" }}
+            {{ authMode === "login" ? "Better Form" : "Create account" }}
           </h2>
           <p class="text-gray-600">
             {{
@@ -142,7 +144,7 @@
       </div>
     </div>
 
-    <main class="max-w-6xl mx-auto px-6 py-8">
+    <main class="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 py-6 md:py-8 flex-1 w-full">
       <div v-if="isPublicForm">
         <div v-if="publicForm">
           <div class="max-w-2xl mx-auto">
@@ -158,8 +160,8 @@
                 ></div>
               </div>
 
-              <div class="p-8 text-center border-b border-gray-100">
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+              <div class="p-4 sm:p-8 text-center border-b border-gray-100">
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                   {{ publicForm.title }}
                 </h1>
                 <p v-if="publicForm.description" class="text-gray-600">
@@ -167,7 +169,7 @@
                 </p>
               </div>
 
-              <div class="p-8 min-h-[400px] flex flex-col justify-center">
+              <div class="p-4 sm:p-8 min-h-[300px] sm:min-h-[400px] flex flex-col justify-center">
                 <div
                   v-if="currentQuestionIndex < publicForm.questions.length"
                   class="space-y-8"
@@ -182,7 +184,7 @@
                   <h2
                     class="text-2xl font-semibold text-gray-900 text-center leading-relaxed"
                   >
-                    {{ publicForm.questions[currentQuestionIndex].question }}
+                    {{ publicForm.questions[currentQuestionIndex].question || (publicForm.questions[currentQuestionIndex].type === 'email' ? 'Email address' : '') }}
                     <span
                       v-if="publicForm.questions[currentQuestionIndex].required"
                       class="text-red-500"
@@ -200,7 +202,7 @@
                     <input
                       v-model="publicFormResponses[currentQuestionIndex]"
                       :type="publicForm.questions[currentQuestionIndex].type"
-                      placeholder="Type your answer..."
+                      :placeholder="publicForm.questions[currentQuestionIndex].type === 'email' && publicForm.questions[currentQuestionIndex].question ? publicForm.questions[currentQuestionIndex].question : 'Type your answer...'"
                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-black focus:ring-0 transition-all text-center text-lg"
                       @keyup.enter="nextPublicQuestion"
                     />
@@ -271,19 +273,19 @@
                   </div>
                 </div>
 
-                <div v-else class="text-center space-y-6">
+                <div v-else class="text-center space-y-4 sm:space-y-6">
                   <div
-                    class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto"
+                    class="w-12 sm:w-16 h-12 sm:h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto"
                   >
-                    <Check class="w-8 h-8 text-green-600" />
+                    <Check class="w-6 sm:w-8 h-6 sm:h-8 text-green-600" />
                   </div>
-                  <h2 class="text-2xl font-bold text-gray-900">Thank you!</h2>
+                  <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Thank you!</h2>
                   <p class="text-gray-600">
                     Your response has been recorded successfully.
                   </p>
                   <button
                     @click="goHome"
-                    class="bg-black text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors"
+                    class="bg-black text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors"
                   >
                     Create Your Own Form
                   </button>
@@ -292,12 +294,12 @@
 
               <div
                 v-if="currentQuestionIndex < publicForm.questions.length"
-                class="p-6 bg-gray-50 flex justify-between items-center"
+                class="p-4 sm:p-6 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0"
               >
                 <button
                   v-if="currentQuestionIndex > 0"
                   @click="previousPublicQuestion"
-                  class="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors px-4 py-2 rounded-lg hover:bg-white"
+                  class="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-white"
                 >
                   <ChevronLeft class="w-4 h-4" />
                   <span>Previous</span>
@@ -317,7 +319,7 @@
                       !isValidEmail(publicFormResponses[currentQuestionIndex]))
                   "
                   :class="[
-                    'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
+                    'flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-medium transition-all',
                     submitting ||
                     (isPublicQuestionRequired &&
                       !publicFormResponses[currentQuestionIndex]) ||
@@ -345,7 +347,7 @@
                       !isValidEmail(publicFormResponses[currentQuestionIndex]))
                   "
                   :class="[
-                    'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
+                    'flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-medium transition-all',
                     submitting ||
                     (isPublicQuestionRequired &&
                       !publicFormResponses[currentQuestionIndex]) ||
@@ -394,13 +396,12 @@
           </div>
         </div>
       </div>
-      <div v-else-if="!user" class="text-center py-20">
-        <h1 class="text-5xl font-bold text-gray-900 mb-6 leading-tight">
-          Forms that people<br />
-          <span class="text-gray-500">actually want to fill</span>
+      <div v-else-if="!user" class="text-center py-12 sm:py-16 md:py-20">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight break-words">
+          <span v-html="typewriterText" class="inline-block whitespace-pre-line"></span>
         </h1>
         <p
-          class="text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed"
+          class="text-base sm:text-lg md:text-xl text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed"
         >
           Create beautiful, interactive forms that feel more like conversations.
           Higher completion rates, better data quality.
@@ -411,12 +412,12 @@
             showAuthModal = true;
             authMode = 'signup';
           "
-          class="bg-black text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-800 transition-all transform hover:scale-105 shadow-lg"
+          class="bg-black text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg hover:bg-gray-800 transition-all transform hover:scale-105 shadow-lg"
         >
           Start Building
         </button>
 
-        <div class="grid md:grid-cols-3 gap-8 mt-24">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mt-16 sm:mt-24">
           <div class="text-center">
             <div
               class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 mx-auto"
@@ -429,19 +430,6 @@
             <p class="text-gray-600 leading-relaxed">
               Focus attention and increase completion rates with our slideshow
               format.
-            </p>
-          </div>
-          <div class="text-center">
-            <div
-              class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 mx-auto"
-            >
-              <BarChart3 class="w-6 h-6 text-gray-700" />
-            </div>
-            <h3 class="text-lg font-semibold mb-3 text-gray-900">
-              Real-time analytics
-            </h3>
-            <p class="text-gray-600 leading-relaxed">
-              Track responses and analyze data in real-time with Firebase.
             </p>
           </div>
           <div class="text-center">
@@ -501,8 +489,7 @@
               <span class="font-mono">{{ selectedFormForShare?.id }}</span>
             </p>
             <p class="text-xs text-gray-500">
-              Anyone with this link can fill out your form. All responses are
-              stored in Firebase.
+              Anyone with this link can fill out your form.
             </p>
           </div>
         </div>
@@ -562,34 +549,22 @@
         </button>
       </div>
     </div>
+    <footer class="w-full text-center b-0 text-xs text-gray-400 p-2 mt-auto">
+      Made with <span class="text-red-500">❤️</span> by <a href="https://github.com/leecheeyong" target="_blank" class="underline decoration-sky-800">Chee Yong Lee</a>, Open source on <a href="https://github.com/leecheeyong/better-form" target="_blank" class="underline decoration-sky-800">Github</a> under the terms of the <a href="https://github.com/leecheeyong/better-form/blob/main/LICENSE" target="_blank" class="underline decoration-sky-800">MIT License.</a>
+    </footer>
   </div>
 </template>
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import {
-  ArrowLeft,
-  BarChart3,
   Check,
-  CheckSquare,
   ChevronLeft,
   ChevronRight,
-  Edit2,
-  FileText,
-  HelpCircle,
-  Mail,
-  Plus,
   Share2,
   Star,
-  Trash2,
-  Type,
   X,
-  Zap,
-  Database,
-  Download,
-  TrendingUp,
-  Target,
-  Clock,
+  Zap
 } from "lucide-vue-next";
 
 import { initializeApp } from "firebase/app";
@@ -672,7 +647,7 @@ const publicFormResponses = ref({});
 
 const globalAlert = reactive({
   message: "",
-  type: "info", // 'info', 'error', 'success'
+  type: "info", 
 });
 
 const weeklyResponses = computed(() => {
@@ -1191,6 +1166,12 @@ const nextPublicQuestion = async () => {
   }
 };
 
+const previousPublicQuestion = () => {
+  if (currentQuestionIndex.value > 0) {
+    currentQuestionIndex.value--;
+  }
+};
+
 const submitting = ref(false);
 
 const submitPublicForm = async () => {
@@ -1215,7 +1196,6 @@ const submitPublicForm = async () => {
     };
 
     await addDoc(collection(db, "responses"), responseData);
-    // Only update form stats if user is authenticated
     if (user.value) {
       await updateDoc(doc(db, "forms", publicForm.value.id), {
         responseCount: increment(1),
@@ -1276,10 +1256,29 @@ onMounted(async () => {
   });
 });
 
-// Email validation helper
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+const typewriterText = ref("");
+const fullTypewriterText = "Forms that people\nactually want to fill";
+
+function runTypewriterEffect() {
+  typewriterText.value = "";
+  let i = 0;
+  function type() {
+    if (i < fullTypewriterText.length) {
+      typewriterText.value += fullTypewriterText[i] === "\n" ? "\n" : fullTypewriterText[i];
+      i++;
+      setTimeout(type, fullTypewriterText[i - 1] === "\n" ? 400 : 60);
+    }
+  }
+  type();
+}
+
+onMounted(() => {
+  runTypewriterEffect();
+});
 </script>
 <style scoped>
 .line-clamp-2 {
