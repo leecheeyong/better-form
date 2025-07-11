@@ -4,7 +4,7 @@
 
 A modern, minimalist & open-source alternative to Google Forms. Create beautiful, interactive forms that feel more like conversations. Designed for higher completion rates and better data quality.
 
-![Watch The Demo](./demo.mp4)
+<video src="demo-new.mp4" width="500px"></video>
 
 ## About
 - One question at a time conversational UI
