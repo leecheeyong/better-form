@@ -13,7 +13,7 @@
               class="text-xl font-semibold text-gray-900 hover:text-gray-700 transition-colors"
             >
               Better Form
-          </h1>
+            </h1>
           </div>
           <div
             v-if="!user && !isPublicForm"
@@ -65,7 +65,9 @@
     >
       <div class="bg-white rounded-2xl p-4 sm:p-8 max-w-md w-full relative">
         <div class="text-center mb-6 sm:mb-8">
-          <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-8 h-8 bg-black rounded-lg flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-white font-bold text-sm">B</span>
           </div>
           <h2 class="text-2xl font-bold text-gray-900 mb-2">
@@ -144,7 +146,9 @@
       </div>
     </div>
 
-    <main class="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 py-6 md:py-8 flex-1 w-full">
+    <main
+      class="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 py-6 md:py-8 flex-1 w-full"
+    >
       <div v-if="isPublicForm">
         <div v-if="publicForm">
           <div class="max-w-2xl mx-auto">
@@ -169,7 +173,9 @@
                 </p>
               </div>
 
-              <div class="p-4 sm:p-8 min-h-[300px] sm:min-h-[400px] flex flex-col justify-center">
+              <div
+                class="p-4 sm:p-8 min-h-[300px] sm:min-h-[400px] flex flex-col justify-center"
+              >
                 <div
                   v-if="currentQuestionIndex < publicForm.questions.length"
                   class="space-y-8"
@@ -184,7 +190,13 @@
                   <h2
                     class="text-2xl font-semibold text-gray-900 text-center leading-relaxed"
                   >
-                    {{ publicForm.questions[currentQuestionIndex].question || (publicForm.questions[currentQuestionIndex].type === 'email' ? 'Email address' : '') }}
+                    {{
+                      publicForm.questions[currentQuestionIndex].question ||
+                      (publicForm.questions[currentQuestionIndex].type ===
+                      "email"
+                        ? "Email address"
+                        : "")
+                    }}
                     <span
                       v-if="publicForm.questions[currentQuestionIndex].required"
                       class="text-red-500"
@@ -202,7 +214,13 @@
                     <input
                       v-model="publicFormResponses[currentQuestionIndex]"
                       :type="publicForm.questions[currentQuestionIndex].type"
-                      :placeholder="publicForm.questions[currentQuestionIndex].type === 'email' && publicForm.questions[currentQuestionIndex].question ? publicForm.questions[currentQuestionIndex].question : 'Type your answer...'"
+                      :placeholder="
+                        publicForm.questions[currentQuestionIndex].type ===
+                          'email' &&
+                        publicForm.questions[currentQuestionIndex].question
+                          ? publicForm.questions[currentQuestionIndex].question
+                          : 'Type your answer...'
+                      "
                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-black focus:ring-0 transition-all text-center text-lg"
                       @keyup.enter="nextPublicQuestion"
                     />
@@ -279,7 +297,9 @@
                   >
                     <Check class="w-6 sm:w-8 h-6 sm:h-8 text-green-600" />
                   </div>
-                  <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Thank you!</h2>
+                  <h2 class="text-xl sm:text-2xl font-bold text-gray-900">
+                    Thank you!
+                  </h2>
                   <p class="text-gray-600">
                     Your response has been recorded successfully.
                   </p>
@@ -397,8 +417,13 @@
         </div>
       </div>
       <div v-else-if="!user" class="text-center py-12 sm:py-16 md:py-20">
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight break-words">
-          <span v-html="typewriterText" class="inline-block whitespace-pre-line"></span>
+        <h1
+          class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight break-words"
+        >
+          <span
+            v-html="typewriterText"
+            class="inline-block whitespace-pre-line"
+          ></span>
         </h1>
         <p
           class="text-base sm:text-lg md:text-xl text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed"
@@ -417,7 +442,9 @@
           Start Building
         </button>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mt-16 sm:mt-24">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mt-16 sm:mt-24"
+        >
           <div class="text-center">
             <div
               class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 mx-auto"
@@ -550,7 +577,26 @@
       </div>
     </div>
     <footer class="w-full text-center b-0 text-xs text-gray-400 p-2 mt-auto">
-      Made with <span class="text-red-500">❤️</span> by <a href="https://github.com/leecheeyong" target="_blank" class="underline decoration-sky-800">Chee Yong Lee</a>, Open source on <a href="https://github.com/leecheeyong/better-form" target="_blank" class="underline decoration-sky-800">Github</a> under the terms of the <a href="https://github.com/leecheeyong/better-form/blob/main/LICENSE" target="_blank" class="underline decoration-sky-800">MIT License.</a>
+      Made with <span class="text-red-500">❤️</span> by
+      <a
+        href="https://github.com/leecheeyong"
+        target="_blank"
+        class="underline decoration-sky-800"
+        >Chee Yong Lee</a
+      >, Open source on
+      <a
+        href="https://github.com/leecheeyong/better-form"
+        target="_blank"
+        class="underline decoration-sky-800"
+        >Github</a
+      >
+      under the terms of the
+      <a
+        href="https://github.com/leecheeyong/better-form/blob/main/LICENSE"
+        target="_blank"
+        class="underline decoration-sky-800"
+        >MIT License.</a
+      >
     </footer>
   </div>
 </template>
@@ -564,7 +610,7 @@ import {
   Share2,
   Star,
   X,
-  Zap
+  Zap,
 } from "lucide-vue-next";
 
 import { initializeApp } from "firebase/app";
@@ -590,14 +636,7 @@ import {
   increment,
 } from "firebase/firestore";
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: "better-form-95050.firebaseapp.com",
-  projectId: "better-form-95050",
-  storageBucket: "better-form-95050.firebasestorage.app",
-  messagingSenderId: "821126413132",
-  appId: "1:821126413132:web:52814580a0ba8e3e3bade9",
-};
+import { firebaseConfig } from "../firebase";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -647,7 +686,7 @@ const publicFormResponses = ref({});
 
 const globalAlert = reactive({
   message: "",
-  type: "info", 
+  type: "info",
 });
 
 const weeklyResponses = computed(() => {
@@ -1268,7 +1307,8 @@ function runTypewriterEffect() {
   let i = 0;
   function type() {
     if (i < fullTypewriterText.length) {
-      typewriterText.value += fullTypewriterText[i] === "\n" ? "\n" : fullTypewriterText[i];
+      typewriterText.value +=
+        fullTypewriterText[i] === "\n" ? "\n" : fullTypewriterText[i];
       i++;
       setTimeout(type, fullTypewriterText[i - 1] === "\n" ? 400 : 60);
     }

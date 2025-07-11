@@ -13,7 +13,7 @@
               class="text-xl font-semibold text-gray-900 hover:text-gray-700 transition-colors"
             >
               Better Form
-          </h1>
+            </h1>
           </div>
           <div v-if="user" class="flex items-center space-x-4">
             <div
@@ -35,7 +35,10 @@
       </div>
     </nav>
 
-    <main v-if="user || isPublicForm" class="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 py-6 md:py-8 flex-1 w-full">
+    <main
+      v-if="user || isPublicForm"
+      class="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 py-6 md:py-8 flex-1 w-full"
+    >
       <div v-if="isPublicForm && publicForm">
         <div class="max-w-2xl mx-auto">
           <div
@@ -304,7 +307,10 @@
           </button>
         </div>
 
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div
+          v-else
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+        >
           <div
             v-for="form in forms"
             :key="form.id"
@@ -412,7 +418,11 @@
             <div
               class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 lg:sticky lg:top-24"
             >
-              <h3 class="font-semibold mb-4 sm:mb-6 text-gray-900 text-base sm:text-lg">Form Settings</h3>
+              <h3
+                class="font-semibold mb-4 sm:mb-6 text-gray-900 text-base sm:text-lg"
+              >
+                Form Settings
+              </h3>
 
               <div class="space-y-6">
                 <div>
@@ -502,7 +512,9 @@
                 :key="question.id"
                 class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100"
               >
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-0">
+                <div
+                  class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-0"
+                >
                   <div class="flex items-center space-x-3">
                     <div
                       class="w-8 h-8 bg-gray-100 text-gray-600 rounded-lg flex items-center justify-center text-sm font-medium"
@@ -959,8 +971,27 @@
         </button>
       </div>
     </div>
-      <footer class="w-full text-center b-0 text-xs text-gray-400 p-2 mt-auto">
-      Made with <span class="text-red-500">❤️</span> by <a href="https://github.com/leecheeyong" target="_blank" class="underline decoration-sky-800">Chee Yong Lee</a>, Open source on <a href="https://github.com/leecheeyong/better-form" target="_blank" class="underline decoration-sky-800">Github</a> under the terms of the <a href="https://github.com/leecheeyong/better-form/blob/main/LICENSE" target="_blank" class="underline decoration-sky-800">MIT License.</a>
+    <footer class="w-full text-center b-0 text-xs text-gray-400 p-2 mt-auto">
+      Made with <span class="text-red-500">❤️</span> by
+      <a
+        href="https://github.com/leecheeyong"
+        target="_blank"
+        class="underline decoration-sky-800"
+        >Chee Yong Lee</a
+      >, Open source on
+      <a
+        href="https://github.com/leecheeyong/better-form"
+        target="_blank"
+        class="underline decoration-sky-800"
+        >Github</a
+      >
+      under the terms of the
+      <a
+        href="https://github.com/leecheeyong/better-form/blob/main/LICENSE"
+        target="_blank"
+        class="underline decoration-sky-800"
+        >MIT License.</a
+      >
     </footer>
   </div>
 </template>
@@ -1015,14 +1046,7 @@ import {
   increment,
 } from "firebase/firestore";
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: "better-form-95050.firebaseapp.com",
-  projectId: "better-form-95050",
-  storageBucket: "better-form-95050.firebasestorage.app",
-  messagingSenderId: "821126413132",
-  appId: "1:821126413132:web:52814580a0ba8e3e3bade9",
-};
+import { firebaseConfig } from "../firebase";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -1063,7 +1087,7 @@ const publicFormResponses = ref({});
 
 const globalAlert = reactive({
   message: "",
-  type: "info", 
+  type: "info",
 });
 
 const isCurrentQuestionRequired = computed(() => {
