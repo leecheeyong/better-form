@@ -4,6 +4,8 @@
 
 A modern, minimalist & open-source alternative to Google Forms. Create beautiful, interactive forms that feel more like conversations. Designed for higher completion rates and better data quality.
 
+![Watch The Demo](./Better%20Form.mp4)
+
 ## About
 - One question at a time conversational UI
 - Customizable question types: Text, Multiple Choice, Email, Rating
