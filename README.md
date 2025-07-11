@@ -5,7 +5,6 @@
 A modern, minimalist & open-source alternative to Google Forms. Create beautiful, interactive forms that feel more like conversations. Designed for higher completion rates and better data quality.
 
 ## About
-
 - One question at a time conversational UI
 - Customizable question types: Text, Multiple Choice, Email, Rating
 - Responsive and mobile-friendly design
@@ -13,9 +12,7 @@ A modern, minimalist & open-source alternative to Google Forms. Create beautiful
 - Shareable public form links
 - Built with Vue 3, Firebase, and Tailwind CSS
 
-## Getting Started
-
-### Setup
+## Setup
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/leecheeyong/better-form.git
@@ -32,6 +29,12 @@ A modern, minimalist & open-source alternative to Google Forms. Create beautiful
    - Enable **Authentication** (Email/Password).
    - Set up **Cloud Firestore** in test mode (or with secured rules). 
    - Edit the `src/firebase.js` file, replace with your Firebase credentials
+
+## Todo
+[] Connection between Google Sheets & Better Form (Responses Update)
+[] Clean up the code
+[] Build plugins like webhook, push notifications
+[] Turn this into an PWA perhaps
 
 ## Contributing
 Contributions are welcome! Please [open issues](https://github.com/leecheeyong/better-form/issues) or [pull requests](https://github.com/leecheeyong/better-form/pulls) for improvements and bug fixes.
