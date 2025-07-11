@@ -31,10 +31,10 @@ A modern, minimalist & open-source alternative to Google Forms. Create beautiful
    - Edit the `src/firebase.js` file, replace with your Firebase credentials
 
 ## Todo
-[] Connection between Google Sheets & Better Form (Responses Update)
-[] Clean up the code
-[] Build plugins like webhook, push notifications
-[] Turn this into an PWA perhaps
+- [ ] Connection between Google Sheets & Better Form (Responses Update)
+- [ ] Clean up the code
+- [ ] Build plugins like webhook, push notifications
+- [ ] Turn this into an PWA perhaps
 
 ## Contributing
 Contributions are welcome! Please [open issues](https://github.com/leecheeyong/better-form/issues) or [pull requests](https://github.com/leecheeyong/better-form/pulls) for improvements and bug fixes.
