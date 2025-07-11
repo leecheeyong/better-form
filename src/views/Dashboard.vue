@@ -389,7 +389,6 @@
             </button>
             <div>
               <h1 class="text-2xl font-bold text-gray-900">Form Builder</h1>
-              <p class="text-gray-600">Design your form step by step</p>
               <p v-if="currentForm.id" class="text-xs text-gray-500 font-mono">
                 ID: {{ currentForm.id }}
               </p>
@@ -442,19 +441,6 @@
                     rows="3"
                     class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all resize-none"
                   ></textarea>
-                </div>
-
-                <div class="bg-blue-50 p-3 rounded-lg">
-                  <div class="flex items-center space-x-2 mb-2">
-                    <Database class="w-4 h-4 text-blue-600" />
-                    <span class="text-sm font-medium text-blue-900"
-                      >Firebase Storage</span
-                    >
-                  </div>
-                  <p class="text-xs text-blue-700">
-                    All responses are automatically stored in Firebase Firestore
-                    with real-time analytics.
-                  </p>
                 </div>
 
                 <div>
@@ -623,69 +609,6 @@
               <Download class="w-4 h-4" />
               <span>Export CSV</span>
             </button>
-          </div>
-        </div>
-
-        <div class="grid md:grid-cols-4 gap-6 mb-8">
-          <div class="bg-white rounded-2xl p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-600">Total Responses</p>
-                <p class="text-2xl font-bold text-gray-900">
-                  {{ responses.length }}
-                </p>
-              </div>
-              <div
-                class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center"
-              >
-                <BarChart3 class="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-600">This Week</p>
-                <p class="text-2xl font-bold text-gray-900">
-                  {{ weeklyResponses }}
-                </p>
-              </div>
-              <div
-                class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center"
-              >
-                <TrendingUp class="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-600">Completion Rate</p>
-                <p class="text-2xl font-bold text-gray-900">
-                  {{ completionRate }}%
-                </p>
-              </div>
-              <div
-                class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center"
-              >
-                <Target class="w-6 h-6 text-purple-600" />
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-600">Avg. Time</p>
-                <p class="text-2xl font-bold text-gray-900">
-                  {{ averageTime }}s
-                </p>
-              </div>
-              <div
-                class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center"
-              >
-                <Clock class="w-6 h-6 text-orange-600" />
-              </div>
-            </div>
           </div>
         </div>
 
@@ -957,7 +880,9 @@
         </div>
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Public Form Link</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Public Form Link</label
+            >
             <div class="flex space-x-2">
               <input
                 :value="shareUrl"
@@ -978,7 +903,8 @@
               <span class="font-mono">{{ selectedFormForShare?.id }}</span>
             </p>
             <p class="text-xs text-gray-500">
-              Anyone with this link can fill out your form. All responses are stored in Firebase.
+              Anyone with this link can fill out your form. All responses are
+              stored in Firebase.
             </p>
           </div>
         </div>
@@ -1580,7 +1506,7 @@ const shareForm = (form) => {
 const copyShareUrl = async () => {
   try {
     await navigator.clipboard.writeText(shareUrl.value);
-    showAlert('Link copied to clipboard!', 'success');
+    showAlert("Link copied to clipboard!", "success");
   } catch (err) {
     const textArea = document.createElement("textarea");
     textArea.value = shareUrl.value;
@@ -1588,7 +1514,7 @@ const copyShareUrl = async () => {
     textArea.select();
     document.execCommand("copy");
     document.body.removeChild(textArea);
-    showAlert('Link copied!', 'success');
+    showAlert("Link copied!", "success");
   }
 };
 

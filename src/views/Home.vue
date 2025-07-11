@@ -16,7 +16,6 @@
               Better Form
             </button>
           </div>
-
           <div
             v-if="!user && !isPublicForm"
             class="flex items-center space-x-3"
@@ -205,6 +204,17 @@
                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-black focus:ring-0 transition-all text-center text-lg"
                       @keyup.enter="nextPublicQuestion"
                     />
+                    <div
+                      v-if="
+                        publicForm.questions[currentQuestionIndex].type ===
+                          'email' &&
+                        publicFormResponses[currentQuestionIndex] &&
+                        !isValidEmail(publicFormResponses[currentQuestionIndex])
+                      "
+                      class="text-red-500 text-sm mt-2"
+                    >
+                      Please enter a valid email address.
+                    </div>
                   </div>
 
                   <div
@@ -236,7 +246,8 @@
 
                   <div
                     v-else-if="
-                      publicForm.questions[currentQuestionIndex].type === 'rating'
+                      publicForm.questions[currentQuestionIndex].type ===
+                      'rating'
                     "
                   >
                     <div class="flex justify-center space-x-2">
@@ -299,13 +310,21 @@
                   :disabled="
                     submitting ||
                     (isPublicQuestionRequired &&
-                      !publicFormResponses[currentQuestionIndex])
+                      !publicFormResponses[currentQuestionIndex]) ||
+                    (publicForm.questions[currentQuestionIndex].type ===
+                      'email' &&
+                      publicFormResponses[currentQuestionIndex] &&
+                      !isValidEmail(publicFormResponses[currentQuestionIndex]))
                   "
                   :class="[
                     'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
                     submitting ||
                     (isPublicQuestionRequired &&
-                      !publicFormResponses[currentQuestionIndex])
+                      !publicFormResponses[currentQuestionIndex]) ||
+                    (publicForm.questions[currentQuestionIndex].type ===
+                      'email' &&
+                      publicFormResponses[currentQuestionIndex] &&
+                      !isValidEmail(publicFormResponses[currentQuestionIndex]))
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       : 'bg-black text-white hover:bg-gray-800',
                   ]"
@@ -319,13 +338,21 @@
                   :disabled="
                     submitting ||
                     (isPublicQuestionRequired &&
-                      !publicFormResponses[currentQuestionIndex])
+                      !publicFormResponses[currentQuestionIndex]) ||
+                    (publicForm.questions[currentQuestionIndex].type ===
+                      'email' &&
+                      publicFormResponses[currentQuestionIndex] &&
+                      !isValidEmail(publicFormResponses[currentQuestionIndex]))
                   "
                   :class="[
                     'flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all',
                     submitting ||
                     (isPublicQuestionRequired &&
-                      !publicFormResponses[currentQuestionIndex])
+                      !publicFormResponses[currentQuestionIndex]) ||
+                    (publicForm.questions[currentQuestionIndex].type ===
+                      'email' &&
+                      publicFormResponses[currentQuestionIndex] &&
+                      !isValidEmail(publicFormResponses[currentQuestionIndex]))
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       : 'bg-black text-white hover:bg-gray-800',
                   ]"
@@ -344,7 +371,9 @@
             >
               <X class="w-8 h-8 text-red-600" />
             </div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-3">Form Not Found</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-3">
+              Form Not Found
+            </h2>
             <p class="text-gray-600 mb-8">
               The form you're looking for doesn't exist or has been deleted.
             </p>
@@ -1246,6 +1275,11 @@ onMounted(async () => {
     }
   });
 });
+
+// Email validation helper
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 </script>
 <style scoped>
 .line-clamp-2 {
